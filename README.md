@@ -1,6 +1,6 @@
 # react-app-playground
 
-Barebones react SPA application with tooling for learning and experimentation
+Barebones react SPA application with tooling for learning and experimentation.
 
 ## Key Infrastructure
 
@@ -14,6 +14,9 @@ Barebones react SPA application with tooling for learning and experimentation
 
 - Tanstack query for data management
 - Mock Service Worker (MSW) for API mocking and manipulation
+
+## Node/React Versions
+We are not targetting the latest Node or React versions to maintain compatibility with other parts of our estate. As our general support level moves forward, we will update the playground to match.  
 
 ## No Tailwind
 We have intentionally not included Tailwind setup as part of this playground for now, so that you can use it to improve your native CSS skills via the modular SCSS support instead.
