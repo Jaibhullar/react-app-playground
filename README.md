@@ -13,7 +13,14 @@ Barebones react SPA application with tooling for learning and experimentation
 ## Capability Libraries
 
 - Tanstack query for data management
-- Mock Service Worker for API mocking and manipulation
+- Mock Service Worker (MSW) for API mocking and manipulation
+
+## No Tailwind
+We have intentionally not included Tailwind setup as part of this playground for now, so that you can use it to improve your native CSS skills via the modular SCSS support instead.
+
+## MSW
+This playground includes MSW (Mock Service Worker) support for API mocking. You can find an example of a service and corresponding mock implementation in the *src/areas/demo/service* folder.
+It is intended to provide more advanced, accurate and production style API interactions, but does come with some complexity/overhead to setup, so feel free to use more basic hard coded mock data operations if you like.
 
 # Setup
 
