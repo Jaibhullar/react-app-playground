@@ -2,7 +2,8 @@
 @use '@scss/partialSample' as sample;
 
 .table {
-    border-spacing: 4px;
+    margin-top: 8px;
+    border-collapse: collapse;
 }
 
 .table th {

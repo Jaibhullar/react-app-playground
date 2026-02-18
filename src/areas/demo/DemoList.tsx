@@ -37,7 +37,6 @@ export const DemoList = () => {
 					<option value="inactive">Inactive</option>
 				</select>
 			</label>
-			Status: {status}
 			{isLoading &&
 			<p data-testid={testIds.loader}>
 				Loading...
@@ -51,7 +50,6 @@ export const DemoList = () => {
 				<table className={css.table} data-testid={testIds.table}>
 					<thead>
 						<tr>
-							<th>ID</th>
 							<th>Name</th>
 							<th>Status</th>
 							<th>Created</th>
@@ -60,7 +58,6 @@ export const DemoList = () => {
 					<tbody>
 						{data.items.map(item => (
 							<tr key={item.id}>
-								<td>{item.id}</td>
 								<td>{item.name}</td>
 								<td>{item.status}</td>
 								<td>{item.created.toLocaleString()}</td>
