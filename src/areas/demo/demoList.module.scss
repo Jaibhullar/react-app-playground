@@ -1,0 +1,22 @@
+// IMPORTANT - When editing make sure you are running the 'watch-scss' script to ensure that the module class type definitions are kept in sync with this file.
+@use '@scss/partialSample' as sample;
+
+.table {
+    border-spacing: 4px;
+}
+
+.table th {
+    @include sample.shade-area;
+
+    font-weight: bold;
+    padding: 4px;
+    text-align: left;
+}
+
+.table td {
+    padding: 4px;
+}
+
+.error {
+    color: red;
+}

@@ -1,0 +1,96 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    /** Formatters setup **/
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "typescript.preferences.autoImportFileExcludePatterns": [
+        "**/node_modules/@types/node" //Exclude node types from auto import list (e.g. vm createContext)
+    ],
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "[scss]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.fixAll.stylelint": "explicit"
+    },
+    //---- ESLint setup -----
+    "eslint.codeActionsOnSave.mode": "all",
+    "eslint.format.enable": true,
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "typescriptreact"
+    ],
+    // "eslint.codeAction.disableRuleComment": {
+    //     "enable": false //Prevent 'disable rule' as quick fix (can still be applied manually)
+    // },
+    //These rules are auto applied on save, so don't bother highlighting them in interface
+    "eslint.rules.customizations": [
+        {
+            "rule": "stylistic/quotes",
+            "severity": "off"
+        },
+        {
+            "rule": "stylistic/indent",
+            "severity": "off"
+        },
+        {
+            "rule": "stylistic/brace-style",
+            "severity": "off"
+        },
+        {
+            "rule": "stylistic/no-multi-spaces",
+            "severity": "off"
+        },
+        {
+            "rule": "simple-import-sort/imports",
+            "severity": "off"
+        },
+        {
+            "rule": "stylistic/no-multiple-empty-lines",
+            "severity": "off"
+        },
+        {
+            "rule": "stylistic/spaced-comment",
+            "severity": "off"
+        },
+        {
+            "rule": "stylistic/comma-spacing",
+            "severity": "off"
+        }
+    ],
+    //---- Stylelint setup ------
+    "stylelint.validate": [
+        "css",
+        "scss"
+    ],
+    "stylelint.snippet": [
+        "css",
+        "scss"
+    ],
+    "stylelint.configFile": "./stylelint.config.js",
+    "stylelint.enable": true,
+    //---- CommandOnAllFiles extension ------
+    "commandOnAllFiles.commands": {
+        "Save File": {
+            "command": "workbench.action.files.save",
+            "includeFileExtensions": [
+                ".tsx",
+                ".ts",
+                ".scss"
+            ]
+        }
+    },
+}
