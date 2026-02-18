@@ -29,6 +29,8 @@ More information can be found in the [Mock Service Worker Guide](https://brighth
 
 # Setup
 
+**IMPORTANT! You must disable the Prettier extension for this workspace (find it in VSCode extensions, right click and choose 'Disable (workspace)'). Otherwise Prettier will conflict with the repo's formatting setup.**
+
 **NPM Scripts Window**
 
 The NPM scripts window is shown in VSCode on the left (under explorer).  
