@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 
 import { App } from './App.tsx';
 
+import './common/scss/global.scss';
+
 async function prepare() {
 	const { getWorker } = await import('./msw/mswBrowser.ts');
 	const worker = await getWorker();
