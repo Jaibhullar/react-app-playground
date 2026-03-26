@@ -143,7 +143,7 @@ export const Tooltip = ({
 		>
 			{children}
 			{isVisible &&
-        content &&
+         content != null &&
         createPortal(
         	<div
         		ref={tooltipRef}
