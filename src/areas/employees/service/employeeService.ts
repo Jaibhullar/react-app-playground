@@ -69,3 +69,5 @@ function getQueryUrl(request: GetEmployeesRequest) {
 	const roleId = request.roleId ?? 'all';
 	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentId', String(departmentId)).replace(':locationId', String(locationId)).replace(':roleId', String(roleId))}`;
 }
+
+export const employeeServiceMeta = { routes: { getItems: getEmployeesRoute } };
