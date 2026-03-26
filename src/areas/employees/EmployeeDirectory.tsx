@@ -16,7 +16,7 @@ export const EmployeeDirectory = () => {
 			{data && (
 				<ul>
 					{data.employees.map(employee => (
-						<li key={employee.id}>{employee.name}</li>
+						<li key={employee.id}>{employee.name} {employee.role.name} {employee.department.name} {employee.location.name}</li>
 					))}
 				</ul>
 			)}
