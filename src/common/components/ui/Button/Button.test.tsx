@@ -97,3 +97,71 @@ describe('Button', ()=>{
 		expect(button).toContainElement(icon);
 	});
 });
+
+describe('Button asLink', () => {
+	it('should render with default variant and size', ()=>{
+		render(<Button asLink>Click me</Button>);
+
+		const linkButton = screen.getByTestId(testIds.linkButton);
+
+		expect(linkButton).toBeInTheDocument();
+
+		expect(linkButton).toHaveClass(css.variantDefault);
+		expect(linkButton).toHaveClass(css.sizeDefault);
+	});
+
+	it.each(variants)('should apply $variant variant class', ({ variant, className })=>{
+		render(<Button asLink variant={variant}>Click me</Button>);
+		const linkButton = screen.getByTestId(testIds.linkButton);
+		expect(linkButton).toHaveClass(className);
+	});
+
+	it.each(sizes)('should apply $size size class', ({ size, className })=>{
+		render(<Button asLink size={size}>Click me</Button>);
+		const linkButton = screen.getByTestId(testIds.linkButton);
+		expect(linkButton).toHaveClass(className);
+	});
+
+	it('should render children content correctly', ()=>{
+		render(<Button asLink>Click me</Button>);
+
+		const linkButton = screen.getByTestId(testIds.linkButton);
+		expect(linkButton).toHaveTextContent('Click me');
+	});
+
+	it('should accept and apply href attribute', ()=>{
+		render(<Button asLink href='www.test.com'>Click me</Button>);
+
+		const linkButton = screen.getByTestId(testIds.linkButton);
+
+		expect(linkButton).toHaveAttribute('href', 'www.test.com');
+	});
+
+	it('should apply custom className alongside base classes', ()=>{
+		render(<Button asLink className='custom-class'>Click me</Button>);
+
+		const linkButton = screen.getByTestId(testIds.linkButton);
+
+		expect(linkButton).toHaveClass('custom-class');
+		expect(linkButton).toHaveClass(css.button);
+	});
+
+	it('should forward additional props (target, rel, data-testid etc.)', ()=>{
+		render(<Button asLink href='www.test.com' target='_blank' rel='noopener noreferrer' data-testid='custom-link-button'>Click me</Button>);
+
+		const linkButton = screen.getByTestId('custom-link-button');
+
+		expect(linkButton).toHaveAttribute('target', '_blank');
+		expect(linkButton).toHaveAttribute('rel', 'noopener noreferrer');
+	});
+
+	it('should render icons within link button', ()=>{
+		const Icon = () => <span data-testid='icon'>Icon</span>;
+		render(<Button asLink><Icon />Click me</Button>);
+
+		const linkButton = screen.getByTestId(testIds.linkButton);
+		const icon = screen.getByTestId('icon');
+
+		expect(linkButton).toContainElement(icon);
+	});
+});
