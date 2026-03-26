@@ -1,3 +1,6 @@
+// Button and LinkButton are separate files because they use different
+// HTML elements (<button> vs <a>) with distinct behaviors and props
+
 import css from './Button.module.scss';
 
 const testIds = {
