@@ -2,7 +2,7 @@ import { Loader2Icon } from 'lucide-react';
 
 import css from './Spinner.module.scss';
 
-export type SpinnerProps = React.ComponentPropsWithoutRef<'svg'>;
+export type SpinnerProps = React.ComponentPropsWithoutRef<typeof Loader2Icon>;
 
 export const Spinner = ({ className, ...props }: SpinnerProps) => (
 	<Loader2Icon

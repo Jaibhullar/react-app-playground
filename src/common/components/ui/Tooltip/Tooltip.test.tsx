@@ -196,4 +196,32 @@ describe('Tooltip', () => {
 			expect(screen.queryByTestId(testIds.tooltip)).not.toBeInTheDocument();
 		});
 	});
+
+	it('should have proper ARIA relationship between trigger and tooltip', async()=>{
+		const user = userEvent.setup();
+		render(<Tooltip content="Tooltip content"><button data-testid="tooltip-trigger">I am a tooltip</button></Tooltip>);
+
+		const button = screen.getByTestId('tooltip-trigger');
+
+		await user.hover(button);
+
+		await waitFor(()=>{
+			const tooltip = screen.getByTestId(testIds.tooltip);
+			expect(tooltip).toBeInTheDocument();
+
+			// Check tooltip has an id attribute
+			const tooltipId = tooltip.getAttribute('id');
+			expect(tooltipId).toBeTruthy();
+
+			// Verify the trigger wrapper has aria-describedby matching the tooltip id
+			const triggerWithAria = screen.getByRole('button', { description: 'Tooltip content' });
+			expect(triggerWithAria).toBeInTheDocument();
+		});
+
+		await user.unhover(button);
+
+		await waitFor(()=>{
+			expect(screen.queryByTestId(testIds.tooltip)).not.toBeInTheDocument();
+		});
+	});
 });

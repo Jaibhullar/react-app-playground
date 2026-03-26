@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import css from './Tooltip.module.scss';
@@ -69,6 +69,7 @@ export const Tooltip = ({
 	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const triggerRef = useRef<HTMLDivElement>(null);
 	const tooltipRef = useRef<HTMLDivElement>(null);
+	const tooltipId = useId();
 
 	const updatePosition = useCallback(() => {
 		if (triggerRef.current && tooltipRef.current) {
@@ -138,6 +139,7 @@ export const Tooltip = ({
 			onMouseLeave={hideTooltip}
 			onFocus={showTooltip}
 			onBlur={hideTooltip}
+			aria-describedby={isVisible ? tooltipId : undefined}
 		>
 			{children}
 			{isVisible &&
@@ -145,12 +147,14 @@ export const Tooltip = ({
         createPortal(
         	<div
         		ref={tooltipRef}
+        		id={tooltipId}
         		data-testid={testIds.tooltip}
         		role="tooltip"
         		style={{
         			top: position.top,
         			left: position.left,
         		}}
+
         		className={[css.tooltip, className].filter(Boolean).join(' ')}
         	>
         		{content}
