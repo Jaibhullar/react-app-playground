@@ -1,0 +1,56 @@
+// Design System - CSS Custom Properties
+:root {
+
+    // Radius scale
+    --radius: 0.5rem;
+    --radius-sm: calc(var(--radius) - 4px);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
+    --radius-3xl: calc(var(--radius) + 12px);
+    --radius-4xl: calc(var(--radius) + 16px);
+
+    // Core colors
+    --background: oklch(100% 0 0deg);
+    --foreground: oklch(14.1% 0.005 285.823deg);
+
+    // Card
+    --card: oklch(100% 0 0deg);
+    --card-foreground: oklch(14.1% 0.005 285.823deg);
+
+    // Primary
+    --primary: oklch(60.6% 0.25 292.717deg);
+    --primary-foreground: oklch(96.9% 0.016 293.756deg);
+
+    // Secondary
+    --secondary: oklch(96.7% 0.001 286.375deg);
+    --secondary-foreground: oklch(21% 0.006 285.885deg);
+
+    // Muted
+    --muted: oklch(96.7% 0.001 286.375deg);
+    --muted-foreground: oklch(55.2% 0.016 285.938deg);
+
+    // Destructive
+    --destructive: oklch(57.7% 0.245 27.325deg);
+
+    // Border, Input, Ring
+    --border: oklch(92% 0.004 286.32deg);
+    --input: oklch(92% 0.004 286.32deg);
+    --ring: oklch(60.6% 0.25 292.717deg);
+}
+
+// Base styles
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    border-color: var(--border);
+}
+
+body {
+    margin: 0;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

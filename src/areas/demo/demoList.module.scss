@@ -1,5 +1,4 @@
 // IMPORTANT - When editing make sure you are running the 'watch-scss' script to ensure that the module class type definitions are kept in sync with this file.
-@use '@scss/partialSample' as sample;
 
 .table {
     margin-top: 8px;
@@ -7,8 +6,6 @@
 }
 
 .table th {
-    @include sample.shade-area;
-
     font-weight: bold;
     padding: 4px;
     text-align: left;

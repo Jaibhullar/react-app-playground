@@ -4,6 +4,13 @@ import { mswServer } from './mswTest';
 
 import '@testing-library/jest-dom/vitest'; // Required to extend 'expects' function in vitest
 
+// Mock ResizeObserver for jsdom
+global.ResizeObserver = class ResizeObserver {
+	observe() {}
+	unobserve() {}
+	disconnect() {}
+};
+
 beforeAll(() => {
 	mswServer.listen({ onUnhandledRequest: 'bypass' });
 });
