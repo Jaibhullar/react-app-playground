@@ -4,13 +4,13 @@ import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
 import { type DTO_GetEmployeesResponse, employeeServiceMeta, type GetEmployeesRequest } from './employeeService';
-import { mockData } from './mockEmployeeData';
+import { mockEmployees } from './mockEmployeeData';
 
 const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
 
 const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<GetEmployeesRequest>>(
 	({ routeParams }) => ({
-		employees: mockData.filter(employee => (routeParams.departmentId === 'all' || employee.department.id === Number(routeParams.departmentId))
+		employees: mockEmployees.filter(employee => (routeParams.departmentId === 'all' || employee.department.id === Number(routeParams.departmentId))
             && (routeParams.locationId === 'all' || employee.location.id === Number(routeParams.locationId))
             && (routeParams.roleId === 'all' || employee.role.id === Number(routeParams.roleId))),
 	}));

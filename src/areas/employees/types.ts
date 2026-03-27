@@ -26,3 +26,15 @@ export type EmployeeFilters = {
 	locationId?: number,
 	roleId?: number,
 };
+
+export type EmployeeDetail = Employee & {
+	email: string,
+	phone: string,
+	hierarchy: Hierarchy,
+};
+
+export type Hierarchy = {
+	managers: Employee[],
+	subordinates: Employee[],
+	directPeers: Employee[],
+};

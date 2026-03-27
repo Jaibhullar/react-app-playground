@@ -1,6 +1,6 @@
-import { DTO_Employee } from './employeeService';
+import { DTO_Employee, DTO_EmployeeDetail } from './employeeService';
 
-const idCounter = 0;
+let idCounter = 0;
 
 const departmentNames: Record<number, string> = {
 	0: 'Engineering',
@@ -63,6 +63,7 @@ function createData(name: string, departmentId: number, departmentName: string, 
 const generateDataSet = (count: number) => {
 	const dataSet: DTO_Employee[] = [];
 	for (let i = 1; i <= count; i++) {
+		idCounter++;
 		const departmentId = i % 3;
 		const locationId = i % 2;
 		const roleId = i % 4;
@@ -81,4 +82,24 @@ const generateDataSet = (count: number) => {
 	return dataSet;
 };
 
-export const mockData = generateDataSet(15);
+export const mockEmployees = generateDataSet(30);
+
+export function getEmployeeDetail (employeeId:number):DTO_EmployeeDetail | undefined {
+	console.log('Getting detail for employee ID:', employeeId);
+	const employee = mockEmployees.find(employee=>employee.id === employeeId);
+	if (!employee) return undefined;
+
+	return {
+		...employee,
+		email: `${employee.name.toLowerCase().replace(' ', '.')}@example.com`,
+		phone: `555-01${employee.id.toString().padStart(2, '0')}`,
+		hierarchy: {
+			// Find some managers (could be employees with lower IDs, or same dept)
+			managers: mockEmployees.filter(e => e.id < employee.id && e.department.id === employee.department.id).slice(0, 1),
+			// Find subordinates (higher IDs, same dept)
+			subordinates: mockEmployees.filter(e => e.id > employee.id && e.department.id === employee.department.id).slice(0, 3),
+			// Find peers (same role, different person)
+			directPeers: mockEmployees.filter(e => e.role.id === employee.role.id && e.id !== employee.id).slice(0, 2),
+		},
+	};
+}
