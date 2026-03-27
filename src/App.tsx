@@ -1,12 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import { DemoList } from './areas/demo/DemoList';
+import { EmployeeDirectory } from './areas/employees/EmployeeDirectory';
 
 const queryClient = new QueryClient();
 
 export const App = () => {
 	return <QueryClientProvider client={queryClient}>
 		<div> This is your playground - have fun! </div>
-		<DemoList />
+		<EmployeeDirectory />
 	</QueryClientProvider>;
 };

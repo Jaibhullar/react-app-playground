@@ -2,13 +2,17 @@ import { HttpHandler } from 'msw';
 import { setupWorker } from 'msw/browser';
 
 import { mswDemoItemService } from '@/areas/demo/service/mswDemoItemService';
+import { mswEmployeeService } from '@/areas/employees/service/mswEmployeeService';
 
 import { outputHandlersToConsole } from './core_msw';
+import { mswEmployeeDetailService } from '@/areas/employees/service/mswEmployeeDetailService';
 
 function getActiveHandlers() {
 	// IMPORT AND ADD MOCK HANDLER ARRAYS INTO THIS ARRAY
 	const handlers: HttpHandler[][] = [
 		mswDemoItemService,
+		mswEmployeeService,
+		mswEmployeeDetailService,
 	];
 	return handlers;
 }
