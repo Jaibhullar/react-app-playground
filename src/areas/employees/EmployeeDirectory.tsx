@@ -8,7 +8,7 @@ export const EmployeeDirectory = () => {
 		queryFn: ()=>executeGetEmployees({}),
 	});
 
-	const { data: employeeDetailData, isLoading: isEmployeeDetailLoading, isError: isEmployeeDetailError } = useQuery({
+	const { data: employeeDetailData } = useQuery({
 		queryKey: ['employeeDetail', 30],
 		queryFn: ()=>executeGetEmployeeDetail({ employeeId: 30 }),
 		enabled: !!data, // Only run this query if the employee list has loaded

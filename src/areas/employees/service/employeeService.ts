@@ -124,7 +124,7 @@ export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest
 		)
 		.then(json=>{
 			const responseDTO = json as DTO_GetEmployeeDetailResponse;
-			const response : GetEmployeeDetailResponse = { employee: transformDetailDTO(responseDTO.employee) as EmployeeDetail };
+			const response : GetEmployeeDetailResponse = { employee: transformDetailDTO(responseDTO.employee) };
 			return response;
 		});
 
