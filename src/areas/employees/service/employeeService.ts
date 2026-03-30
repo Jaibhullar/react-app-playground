@@ -55,9 +55,9 @@ export type GetEmployeeDetailResponse = {
 	employee: EmployeeDetail | undefined,
 };
 
-const getEmployeesRoute = 'employees:department=:departmentId&location=:locationId&role=:roleId' as const;
+const getEmployeesRoute = '/employees:department=:departmentId&location=:locationId&role=:roleId' as const;
 
-const getEmployeeDetailRoute = 'employee/:employeeId' as const;
+const getEmployeeDetailRoute = '/employee/:employeeId' as const;
 
 function transformDTO(dto: DTO_Employee): Employee {
 	const { id, name, department, location, role } = dto;
@@ -111,7 +111,7 @@ function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
 }
 
 function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
-	return `${API_BASE_URL}employee/${request.employeeId}`;
+	return `${API_BASE_URL}/${getEmployeeDetailRoute.replace(':employeeId', String(request.employeeId))}`;
 }
 
 export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest) {

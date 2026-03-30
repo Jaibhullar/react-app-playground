@@ -11,8 +11,8 @@ const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.get
 const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<GetEmployeesRequest>>(
 	({ routeParams }) => ({
 		employees: mockEmployees.filter(employee => (routeParams.departmentId === 'all' || employee.department.id === Number(routeParams.departmentId))
-            && (routeParams.locationId === 'all' || employee.location.id === Number(routeParams.locationId))
-            && (routeParams.roleId === 'all' || employee.role.id === Number(routeParams.roleId))),
+			&& (routeParams.locationId === 'all' || employee.location.id === Number(routeParams.locationId))
+			&& (routeParams.roleId === 'all' || employee.role.id === Number(routeParams.roleId))),
 	}));
 
 // IMPORTANT - Services must be added to the /src/msw/mswBrowser.ts file to have them included in the browser mock service worker setup.
