@@ -111,7 +111,7 @@ function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
 }
 
 function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
-	return `${API_BASE_URL}/${getEmployeeDetailRoute.replace(':employeeId', String(request.employeeId))}`;
+	return `${API_BASE_URL}${getEmployeeDetailRoute.replace(':employeeId', String(request.employeeId))}`;
 }
 
 export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest) {
