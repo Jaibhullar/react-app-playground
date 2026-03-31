@@ -21,6 +21,10 @@ export type DTO_Employee = {
 
 export type DTO_GetEmployeesResponse = {
 	employees: DTO_Employee[],
+	totalItems: number,
+	currentPage: number,
+	pageSize: number,
+	totalPages: number,
 };
 
 export type GetEmployeesFilters = {
@@ -41,6 +45,10 @@ export type GetEmployeesRequest = {
 
 export type GetEmployeesResponse = {
 	employees: Employee[],
+	totalItems: number,
+	currentPage: number,
+	pageSize: number,
+	totalPages: number,
 };
 
 export type DTO_EmployeeDetail = DTO_Employee & {
@@ -107,7 +115,7 @@ export async function executeGetEmployees(request: GetEmployeesRequest) {
 		)
 		.then(json=>{
 			const responseDTO = json as DTO_GetEmployeesResponse;
-			const response : GetEmployeesResponse = { employees: responseDTO.employees.map(transformDTO) };
+			const response : GetEmployeesResponse = { ...responseDTO, employees: responseDTO.employees.map(transformDTO) };
 			return response;
 		});
 }

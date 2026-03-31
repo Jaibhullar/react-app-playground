@@ -22,6 +22,10 @@ const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<Ro
 		const paginatedEmployees = paginateData(filteredEmployees, Number(currentPage), Number(pageSize));
 		return {
 			employees: paginatedEmployees,
+			totalItems: filteredEmployees.length,
+			currentPage: Number(currentPage),
+			pageSize: Number(pageSize),
+			totalPages: Math.ceil(filteredEmployees.length / Number(pageSize)),
 		};
 	});
 
