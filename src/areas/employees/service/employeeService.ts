@@ -27,6 +27,8 @@ export type GetEmployeesRequest = {
 	departmentId?: number,
 	locationId?: number,
 	roleId?: number,
+	currentPage?: number,
+	pageSize?: number,
 };
 
 export type GetEmployeesResponse = {
@@ -55,7 +57,7 @@ export type GetEmployeeDetailResponse = {
 	employee: EmployeeDetail | undefined,
 };
 
-const getEmployeesRoute = '/employees:department=:departmentId&location=:locationId&role=:roleId' as const;
+const getEmployeesRoute = '/employees:department=:departmentId&location=:locationId&role=:roleId&currentPage=:currentPage&pageSize=:pageSize' as const;
 
 const getEmployeeDetailRoute = '/employee/:employeeId' as const;
 
@@ -104,10 +106,12 @@ export async function executeGetEmployees(request: GetEmployeesRequest) {
 
 
 function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
-	const departmentId = request.departmentId ?? 'all';
-	const locationId = request.locationId ?? 'all';
-	const roleId = request.roleId ?? 'all';
-	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentId', String(departmentId)).replace(':locationId', String(locationId)).replace(':roleId', String(roleId))}`;
+	const departmentId = request?.departmentId ?? 'all';
+	const locationId = request?.locationId ?? 'all';
+	const roleId = request?.roleId ?? 'all';
+	const currentPage = request?.currentPage ?? 1;
+	const pageSize = request?.pageSize ?? 20;
+	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentId', departmentId.toString()).replace(':locationId', locationId.toString()).replace(':roleId', roleId.toString()).replace(':currentPage', currentPage.toString()).replace(':pageSize', pageSize.toString())}`;
 }
 
 function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
