@@ -23,12 +23,20 @@ export type DTO_GetEmployeesResponse = {
 	employees: DTO_Employee[],
 };
 
-export type GetEmployeesRequest = {
+export type GetEmployeesFilters = {
 	departmentId?: number,
 	locationId?: number,
 	roleId?: number,
+};
+
+export type GetEmployeesPagination = {
 	currentPage?: number,
 	pageSize?: number,
+};
+
+export type GetEmployeesRequest = {
+	filters?: GetEmployeesFilters,
+	pagination?: GetEmployeesPagination,
 };
 
 export type GetEmployeesResponse = {
@@ -106,11 +114,11 @@ export async function executeGetEmployees(request: GetEmployeesRequest) {
 
 
 function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
-	const departmentId = request?.departmentId ?? 'all';
-	const locationId = request?.locationId ?? 'all';
-	const roleId = request?.roleId ?? 'all';
-	const currentPage = request?.currentPage ?? 1;
-	const pageSize = request?.pageSize ?? 20;
+	const departmentId = request?.filters?.departmentId ?? 'all';
+	const locationId = request?.filters?.locationId ?? 'all';
+	const roleId = request?.filters?.roleId ?? 'all';
+	const currentPage = request?.pagination?.currentPage ?? 1;
+	const pageSize = request?.pagination?.pageSize ?? 20;
 	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentId', departmentId.toString()).replace(':locationId', locationId.toString()).replace(':roleId', roleId.toString()).replace(':currentPage', currentPage.toString()).replace(':pageSize', pageSize.toString())}`;
 }
 

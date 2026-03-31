@@ -4,12 +4,14 @@ import { paginateData } from '@/common/utils/paginateData';
 import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { type DTO_GetEmployeesResponse, employeeServiceMeta, type GetEmployeesRequest } from './employeeService';
+import { type DTO_GetEmployeesResponse, employeeServiceMeta, type GetEmployeesFilters, type GetEmployeesPagination } from './employeeService';
 import { mockEmployees } from './mockEmployeeData';
 
 const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
 
-const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<GetEmployeesRequest>>(
+export type RouteParams = GetEmployeesFilters & GetEmployeesPagination;
+
+const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<RouteParams>>(
 	({ routeParams }) => {
 		const { departmentId, locationId, roleId, currentPage, pageSize } = routeParams;
 
