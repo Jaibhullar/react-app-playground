@@ -138,15 +138,12 @@ export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest
 	const url = getEmployeeDetailQueryUrl(request);
 
 	// Note there is no error handling and we are using base fetch here for demo simplicity.
-	return fetch(url)
-		.then(response=>
-			response.json()
-		)
-		.then(json=>{
-			const responseDTO = json as DTO_GetEmployeeDetailResponse;
-			const response : GetEmployeeDetailResponse = { employee: transformDetailDTO(responseDTO.employee) };
-			return response;
-		});
+	const resp = await fetch(url);
+	const json = await resp.json();
+	const responseDTO = json as DTO_GetEmployeeDetailResponse;
+	const response : GetEmployeeDetailResponse = { employee: transformDetailDTO(responseDTO.employee) };
+	return response;
+
 
 }
 
