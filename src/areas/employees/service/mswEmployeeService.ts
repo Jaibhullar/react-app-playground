@@ -6,9 +6,9 @@ import { createMockResponseFactory } from '@/msw/mswUtils';
 import { employeeServiceMeta, type GetEmployeesResponse } from './employeeService';
 import { mockEmployees } from './mockEmployeeData';
 
-const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
+const getEmployeesFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
 
-const getItems = getItemsFactory.get.json<GetEmployeesResponse>(
+const getItems = getEmployeesFactory.get.json<GetEmployeesResponse>(
 	({ queryParams }) => {
 		const search = queryParams.get('search') ?? '';
 		const departmentIds = queryParams.get('department') ?? 'all';

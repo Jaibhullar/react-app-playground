@@ -23,10 +23,23 @@ export type GetEmployeeDetailResponse = {
 	employee: EmployeeDetail | undefined,
 };
 
+export type GetEmployeeFiltersResponse = {
+	departments: {
+		id: number, name: string,
+	}[],
+	locations: {
+		id: number, name: string,
+	}[],
+	roles: {
+		id: number, name: string,
+	}[],
+};
+
 const getEmployeesRoute = '/employees' as const;
 
-
 const getEmployeeDetailRoute = '/employee/:employeeId' as const;
+
+const getEmployeeFiltersRoute = '/employeeFilters' as const;
 
 export async function executeGetEmployees(request: GetEmployeesRequest) {
 	const url = getEmployeesQueryUrl(request);
@@ -62,10 +75,6 @@ function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
 	return `${API_BASE_URL}${getEmployeesRoute}?${params.toString()}`;
 }
 
-function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
-	return `${API_BASE_URL}${getEmployeeDetailRoute.replace(':employeeId', String(request.employeeId))}`;
-}
-
 export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest) {
 	const url = getEmployeeDetailQueryUrl(request);
 
@@ -74,10 +83,24 @@ export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest
 	const json = await resp.json();
 	const response = json as GetEmployeeDetailResponse;
 	return response;
+}
 
+function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
+	return `${API_BASE_URL}${getEmployeeDetailRoute.replace(':employeeId', String(request.employeeId))}`;
+}
 
+export async function executeGetEmployeeFilters() {
+	const url = `${API_BASE_URL}${getEmployeeFiltersRoute}`;
+
+	// Note there is no error handling and we are using base fetch here for demo simplicity.
+	const resp = await fetch(url);
+	const json = await resp.json();
+	const response = json as GetEmployeeFiltersResponse;
+	return response;
 }
 
 export const employeeServiceMeta = { routes: { getItems: getEmployeesRoute } };
 
 export const employeeDetailServiceMeta = { routes: { getItemDetail: getEmployeeDetailRoute } };
+
+export const employeeFiltersServiceMeta = { routes: { getFilters: getEmployeeFiltersRoute } };

@@ -1,17 +1,27 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
+import { executeGetEmployeeFilters, GetEmployeeFiltersResponse } from '../service/employeeService';
 import type { EmployeeFilters } from '../types';
 
 type MultiSelectFilterKeys = Exclude<keyof EmployeeFilters, 'search'>;
 
 export type UseEmployeeFiltersReturnType = {
 	filters: EmployeeFilters,
+	filterOptions: GetEmployeeFiltersResponse | undefined,
+	isLoading: boolean,
+	isError: boolean,
 	addFilter: (filterName: MultiSelectFilterKeys, value: number) => void,
 	removeFilter: (filterName: MultiSelectFilterKeys) => void,
 	setSearchFilter: (value: string) => void,
 };
 
 export const useEmployeeFilters = (): UseEmployeeFiltersReturnType =>{
+	const { data: filterOptions, isLoading, isError } = useQuery({
+		queryKey: ['employeeFilterOptions' ],
+		queryFn: ()=>executeGetEmployeeFilters(),
+	});
+
 	const [filters, setFilters] = useState<EmployeeFilters>({
 		search: '',
 		departmentIds: 'all',
@@ -43,6 +53,9 @@ export const useEmployeeFilters = (): UseEmployeeFiltersReturnType =>{
 
 	return {
 		filters,
+		filterOptions,
+		isLoading,
+		isError,
 		addFilter,
 		removeFilter,
 		setSearchFilter,
