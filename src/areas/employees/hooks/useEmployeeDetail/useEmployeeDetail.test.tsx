@@ -1,30 +1,16 @@
 import { http, HttpResponse } from 'msw';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 
 import { API_BASE_URL } from '@/common/constants';
 import { mswServer } from '@/test/mswTest';
+import { wrapper } from '@/test/testUtils';
 
 import { useEmployeeDetail } from '.';
-
-const wrapper = ({ children }: {
-	children: React.ReactNode,
-}) => {
-	const queryClient = new QueryClient({
-		defaultOptions: { queries: { retry: false } },
-	});
-
-	return (
-		<QueryClientProvider client={queryClient}>
-			{children}
-		</QueryClientProvider>
-	);
-};
 
 describe('useEmployeeDetail', () => {
 	it('should return loading state initially', ()=>{
 		const { result } = renderHook(() => useEmployeeDetail(1), {
-			wrapper,
+			wrapper: wrapper,
 		});
 
 		expect(result.current.isLoading).toBe(true);
