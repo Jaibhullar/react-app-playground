@@ -1,18 +1,14 @@
 
 
 import { paginateData } from '@/common/utils/paginateData/paginateData';
-import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { EmployeeFilters, EmployeePagination } from '../types';
 import { employeeServiceMeta, type GetEmployeesResponse } from './employeeService';
 import { mockEmployees } from './mockEmployeeData';
 
 const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
 
-export type RouteParams = EmployeeFilters & EmployeePagination;
-
-const getItems = getItemsFactory.get.json<GetEmployeesResponse, UrlParams<RouteParams>>(
+const getItems = getItemsFactory.get.json<GetEmployeesResponse>(
 	({ queryParams }) => {
 		const search = queryParams.get('search') ?? '';
 		const departmentIds = queryParams.get('department') ?? 'all';
@@ -21,9 +17,14 @@ const getItems = getItemsFactory.get.json<GetEmployeesResponse, UrlParams<RouteP
 		const currentPage = queryParams.get('currentPage') ?? '1';
 		const pageSize = queryParams.get('pageSize') ?? '10';
 
-		const filteredEmployees = mockEmployees.filter(employee => (departmentIds === 'all' || departmentIds?.split(',').map(Number).includes(employee.department.id))
-			&& (locationIds === 'all' || locationIds?.split(',').map(Number).includes(employee.location.id))
-			&& (roleIds === 'all' || roleIds?.split(',').map(Number).includes(employee.role.id))
+		// Parse filter IDs once before filtering
+		const departmentIdArray = departmentIds !== 'all' ? departmentIds.split(',').map(Number) : null;
+		const locationIdArray = locationIds !== 'all' ? locationIds.split(',').map(Number) : null;
+		const roleIdArray = roleIds !== 'all' ? roleIds.split(',').map(Number) : null;
+
+		const filteredEmployees = mockEmployees.filter(employee => (departmentIdArray === null || departmentIdArray.includes(employee.department.id))
+			&& (locationIdArray === null || locationIdArray.includes(employee.location.id))
+			&& (roleIdArray === null || roleIdArray.includes(employee.role.id))
 			&& (!search || employee.name.toLowerCase().includes(search.toLowerCase())));
 
 		const paginatedEmployees = paginateData(filteredEmployees, Number(currentPage), Number(pageSize));
