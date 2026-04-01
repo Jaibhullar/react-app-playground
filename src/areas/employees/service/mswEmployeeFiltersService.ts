@@ -1,10 +1,10 @@
 
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { employeeDetailServiceMeta, type GetEmployeeFiltersResponse } from './employeeService';
+import { employeeFiltersServiceMeta, type GetEmployeeFiltersResponse } from './employeeService';
 import { mockEmployees } from './mockEmployeeData';
 
-const getEmployeeFiltersFactory = createMockResponseFactory(employeeDetailServiceMeta.routes.getItemDetail);
+const getEmployeeFiltersFactory = createMockResponseFactory(employeeFiltersServiceMeta.routes.getFilters);
 
 const getFilters = getEmployeeFiltersFactory.get.json<GetEmployeeFiltersResponse>(
 	() => {
@@ -22,7 +22,6 @@ const getFilters = getEmployeeFiltersFactory.get.json<GetEmployeeFiltersResponse
 		}, { departments: [], locations: [], roles: [] } as GetEmployeeFiltersResponse);
 
 		return filters;
-
 	});
 
 // IMPORTANT - Services must be added to the /src/msw/mswBrowser.ts file to have them included in the browser mock service worker setup.

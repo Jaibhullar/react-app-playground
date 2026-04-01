@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { executeGetEmployeeDetail } from '../service/employeeService';
-import type { EmployeeDetail } from '../types';
+import { executeGetEmployeeDetail } from '../../service/employeeService';
+import type { EmployeeDetail } from '../../types';
 
 export type UseEmployeeDetailReturnType = {
 	employeeDetailData: EmployeeDetail | undefined,

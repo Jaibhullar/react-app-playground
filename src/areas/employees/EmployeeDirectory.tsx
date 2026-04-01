@@ -1,14 +1,17 @@
 
+import { useEffect } from 'react';
+
 import { usePagination } from '@/common/hooks/usePagination';
 
 import { useEmployeeFilters } from './hooks/useEmployeeFilters';
 import { useEmployees } from './hooks/useEmployees';
 
 export const EmployeeDirectory = () => {
-	const { filters, addFilter, removeFilter } = useEmployeeFilters();
+	const { filters, addFilter, removeFilter, filterOptions } = useEmployeeFilters();
 	const { currentPage, pageSize, goToPage, changePageSize } = usePagination();
 	const { employees, totalPages, totalItems, isLoading, isError } = useEmployees({ filters, pagination: { currentPage, pageSize } });
-
+	useEffect(()=>{
+	}, [filterOptions]);
 	if(isLoading) {
 		return <p>Loading...</p>;
 	}
@@ -20,6 +23,7 @@ export const EmployeeDirectory = () => {
 	if(!employees || employees.length === 0) {
 		return <p>No employees found.</p>;
 	}
+
 
 	return (
 		<>

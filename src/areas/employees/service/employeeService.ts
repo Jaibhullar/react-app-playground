@@ -43,15 +43,14 @@ const getEmployeeFiltersRoute = '/employeeFilters' as const;
 
 export async function executeGetEmployees(request: GetEmployeesRequest) {
 	const url = getEmployeesQueryUrl(request);
-	// Note there is no error handling and we are using base fetch here for demo simplicity.
-	return fetch(url)
-		.then(response=>
-			response.json()
-		)
-		.then(json=>{
-			const response = json as GetEmployeesResponse;
-			return response;
-		});
+
+	const resp = await fetch(url);
+	if (!resp.ok) {
+		throw new Error(`Failed to fetch employees: ${resp.status}`);
+	}
+	const json = await resp.json();
+	const response = json as GetEmployeesResponse;
+	return response;
 }
 
 
@@ -78,8 +77,10 @@ function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
 export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest) {
 	const url = getEmployeeDetailQueryUrl(request);
 
-	// Note there is no error handling and we are using base fetch here for demo simplicity.
 	const resp = await fetch(url);
+	if (!resp.ok) {
+		throw new Error(`Failed to fetch employee detail: ${resp.status}`);
+	}
 	const json = await resp.json();
 	const response = json as GetEmployeeDetailResponse;
 	return response;
@@ -90,10 +91,12 @@ function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
 }
 
 export async function executeGetEmployeeFilters() {
-	const url = `${API_BASE_URL}${getEmployeeFiltersRoute}`;
 
-	// Note there is no error handling and we are using base fetch here for demo simplicity.
+	const url = `${API_BASE_URL}${getEmployeeFiltersRoute}`;
 	const resp = await fetch(url);
+	if (!resp.ok) {
+		throw new Error(`Failed to fetch employee filters: ${resp.status}`);
+	}
 	const json = await resp.json();
 	const response = json as GetEmployeeFiltersResponse;
 	return response;

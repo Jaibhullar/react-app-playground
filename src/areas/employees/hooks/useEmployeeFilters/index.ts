@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { executeGetEmployeeFilters, GetEmployeeFiltersResponse } from '../service/employeeService';
-import type { EmployeeFilters } from '../types';
+import { executeGetEmployeeFilters, GetEmployeeFiltersResponse } from '../../service/employeeService';
+import type { EmployeeFilters } from '../../types';
 
 type MultiSelectFilterKeys = Exclude<keyof EmployeeFilters, 'search'>;
 
