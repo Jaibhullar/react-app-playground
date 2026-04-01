@@ -22,9 +22,14 @@ export type EmployeeRole = {
 };
 
 export type EmployeeFilters = {
-	departmentId?: number,
-	locationId?: number,
-	roleId?: number,
+	departmentIds: number[] | 'all',
+	locationIds: number[] | 'all',
+	roleIds: number[] | 'all',
+};
+
+export type EmployeePagination = {
+	currentPage?: number,
+	pageSize?: number,
 };
 
 export type EmployeeDetail = Employee & {

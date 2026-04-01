@@ -1,6 +1,6 @@
 import { API_BASE_URL } from '@/common/constants';
 
-import type { Employee, EmployeeDetail } from '../types';
+import type { Employee, EmployeeDetail, EmployeeFilters, EmployeePagination } from '../types';
 
 export type DTO_Employee = {
 	id: number,
@@ -27,20 +27,9 @@ export type DTO_GetEmployeesResponse = {
 	totalPages: number,
 };
 
-export type GetEmployeesFilters = {
-	departmentId?: number,
-	locationId?: number,
-	roleId?: number,
-};
-
-export type GetEmployeesPagination = {
-	currentPage?: number,
-	pageSize?: number,
-};
-
 export type GetEmployeesRequest = {
-	filters?: GetEmployeesFilters,
-	pagination?: GetEmployeesPagination,
+	filters?: EmployeeFilters,
+	pagination?: EmployeePagination,
 };
 
 export type GetEmployeesResponse = {
@@ -73,7 +62,7 @@ export type GetEmployeeDetailResponse = {
 	employee: EmployeeDetail | undefined,
 };
 
-const getEmployeesRoute = '/employees:department=:departmentId&location=:locationId&role=:roleId&currentPage=:currentPage&pageSize=:pageSize' as const;
+const getEmployeesRoute = '/employees:department=:departmentIds&location=:locationIds&role=:roleIds&currentPage=:currentPage&pageSize=:pageSize' as const;
 
 const getEmployeeDetailRoute = '/employee/:employeeId' as const;
 
@@ -122,12 +111,12 @@ export async function executeGetEmployees(request: GetEmployeesRequest) {
 
 
 function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
-	const departmentId = request?.filters?.departmentId ?? 'all';
-	const locationId = request?.filters?.locationId ?? 'all';
-	const roleId = request?.filters?.roleId ?? 'all';
+	const departmentIds = request?.filters?.departmentIds ?? 'all';
+	const locationIds = request?.filters?.locationIds ?? 'all';
+	const roleIds = request?.filters?.roleIds ?? 'all';
 	const currentPage = request?.pagination?.currentPage ?? 1;
 	const pageSize = request?.pagination?.pageSize ?? 20;
-	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentId', departmentId.toString()).replace(':locationId', locationId.toString()).replace(':roleId', roleId.toString()).replace(':currentPage', currentPage.toString()).replace(':pageSize', pageSize.toString())}`;
+	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentIds', Array.isArray(departmentIds) ? departmentIds.join(',') : 'all').replace(':locationIds', Array.isArray(locationIds) ? locationIds.join(',') : 'all').replace(':roleIds', Array.isArray(roleIds) ? roleIds.join(',') : 'all').replace(':currentPage', currentPage.toString()).replace(':pageSize', pageSize.toString())}`;
 }
 
 function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
