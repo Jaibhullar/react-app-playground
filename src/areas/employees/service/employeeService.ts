@@ -15,10 +15,6 @@ export type GetEmployeesResponse = {
 	totalPages: number,
 };
 
-export type DTO_GetEmployeeDetailResponse = {
-	employee: EmployeeDetail | undefined,
-};
-
 export type GetEmployeeDetailRequest = {
 	employeeId: number,
 };
@@ -76,8 +72,7 @@ export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest
 	// Note there is no error handling and we are using base fetch here for demo simplicity.
 	const resp = await fetch(url);
 	const json = await resp.json();
-	const responseDTO = json as DTO_GetEmployeeDetailResponse;
-	const response : GetEmployeeDetailResponse = { employee: responseDTO.employee };
+	const response = json as GetEmployeeDetailResponse;
 	return response;
 
 
