@@ -5,15 +5,17 @@ import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
 import { EmployeeFilters, EmployeePagination } from '../types';
-import { type DTO_GetEmployeesResponse, employeeServiceMeta } from './employeeService';
+import { employeeServiceMeta, type GetEmployeesResponse } from './employeeService';
 import { mockEmployees } from './mockEmployeeData';
 
 const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
 
 export type RouteParams = EmployeeFilters & EmployeePagination;
 
-const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<RouteParams>>(
+const getItems = getItemsFactory.get.json<GetEmployeesResponse, UrlParams<RouteParams>>(
 	({ routeParams }) => {
+		console.log(routeParams);
+
 		const { search, departmentIds, locationIds, roleIds, currentPage, pageSize } = routeParams;
 
 		const filteredEmployees = mockEmployees.filter(employee => (departmentIds === 'all' || departmentIds?.split(',').map(Number).includes(employee.department.id))
