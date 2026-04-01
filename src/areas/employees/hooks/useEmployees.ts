@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { executeGetEmployees, GetEmployeesRequest } from '../service/employeeService';
 import type { Employee } from '../types';
 
-export type useEmployeesReturnType = {
+export type UseEmployeesReturnType = {
 	employees: Employee[] | undefined,
 	totalPages: number | undefined,
 	totalItems: number | undefined,
@@ -13,7 +13,7 @@ export type useEmployeesReturnType = {
 	isError: boolean,
 };
 
-export const useEmployees = ({ filters, pagination }:GetEmployeesRequest)=>{
+export const useEmployees = ({ filters, pagination }:GetEmployeesRequest):UseEmployeesReturnType=>{
 	const { data: employeesData, isLoading, isError } = useQuery({
 		queryKey: ['employees', filters, pagination],
 		queryFn: ()=>executeGetEmployees({ filters, pagination }),

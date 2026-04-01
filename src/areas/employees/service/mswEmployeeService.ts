@@ -14,11 +14,12 @@ export type RouteParams = EmployeeFilters & EmployeePagination;
 
 const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<RouteParams>>(
 	({ routeParams }) => {
-		const { departmentIds, locationIds, roleIds, currentPage, pageSize } = routeParams;
+		const { search, departmentIds, locationIds, roleIds, currentPage, pageSize } = routeParams;
 
 		const filteredEmployees = mockEmployees.filter(employee => (departmentIds === 'all' || departmentIds?.split(',').map(Number).includes(employee.department.id))
 			&& (locationIds === 'all' || locationIds?.split(',').map(Number).includes(employee.location.id))
-			&& (roleIds === 'all' || roleIds?.split(',').map(Number).includes(employee.role.id)));
+			&& (roleIds === 'all' || roleIds?.split(',').map(Number).includes(employee.role.id))
+			&& (search === '' || employee.name.toLowerCase().includes(search.toLowerCase())));
 
 		const paginatedEmployees = paginateData(filteredEmployees, Number(currentPage), Number(pageSize));
 		return {

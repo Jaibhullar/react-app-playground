@@ -62,7 +62,7 @@ export type GetEmployeeDetailResponse = {
 	employee: EmployeeDetail | undefined,
 };
 
-const getEmployeesRoute = '/employees:department=:departmentIds&location=:locationIds&role=:roleIds&currentPage=:currentPage&pageSize=:pageSize' as const;
+const getEmployeesRoute = '/employees:search=:search&department=:departmentIds&location=:locationIds&role=:roleIds&currentPage=:currentPage&pageSize=:pageSize' as const;
 
 const getEmployeeDetailRoute = '/employee/:employeeId' as const;
 
@@ -116,7 +116,8 @@ function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
 	const roleIds = request?.filters?.roleIds ?? 'all';
 	const currentPage = request?.pagination?.currentPage ?? 1;
 	const pageSize = request?.pagination?.pageSize ?? 20;
-	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentIds', Array.isArray(departmentIds) ? departmentIds.join(',') : 'all').replace(':locationIds', Array.isArray(locationIds) ? locationIds.join(',') : 'all').replace(':roleIds', Array.isArray(roleIds) ? roleIds.join(',') : 'all').replace(':currentPage', currentPage.toString()).replace(':pageSize', pageSize.toString())}`;
+	const search = request?.filters?.search ?? '';
+	return `${API_BASE_URL}${getEmployeesRoute.replace(':search', encodeURIComponent(search)).replace(':departmentIds', Array.isArray(departmentIds) ? departmentIds.join(',') : 'all').replace(':locationIds', Array.isArray(locationIds) ? locationIds.join(',') : 'all').replace(':roleIds', Array.isArray(roleIds) ? roleIds.join(',') : 'all').replace(':currentPage', currentPage.toString()).replace(':pageSize', pageSize.toString())}`;
 }
 
 function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {

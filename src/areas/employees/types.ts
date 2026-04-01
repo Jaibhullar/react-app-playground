@@ -22,6 +22,7 @@ export type EmployeeRole = {
 };
 
 export type EmployeeFilters = {
+	search: string,
 	departmentIds: number[] | 'all',
 	locationIds: number[] | 'all',
 	roleIds: number[] | 'all',

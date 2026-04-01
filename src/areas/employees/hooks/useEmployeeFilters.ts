@@ -10,6 +10,7 @@ export type useEmployeeFiltersReturnType = {
 
 export const useEmployeeFilters = (): useEmployeeFiltersReturnType =>{
 	const [filters, setFilters] = useState<EmployeeFilters>({
+		search: '',
 		departmentIds: 'all',
 		locationIds: 'all',
 		roleIds: 'all',
