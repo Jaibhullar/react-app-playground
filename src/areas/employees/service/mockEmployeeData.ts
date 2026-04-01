@@ -1,4 +1,4 @@
-import { DTO_Employee, DTO_EmployeeDetail } from './employeeService';
+import type { Employee, EmployeeDetail } from '../types';
 
 let idCounter = 0;
 
@@ -45,7 +45,7 @@ function getRoleName(id: number): string {
 	return Object.values(Role)[id] ?? `Role ${id}`;
 }
 
-function createData(name: string, departmentId: number, departmentName: string, locationId: number, locationName: string, roleId: number, roleName: string): DTO_Employee {
+function createData(name: string, departmentId: number, departmentName: string, locationId: number, locationName: string, roleId: number, roleName: string): Employee {
 	return {
 		id: idCounter,
 		name,
@@ -65,7 +65,7 @@ function createData(name: string, departmentId: number, departmentName: string, 
 }
 
 const generateDataSet = (count: number) => {
-	const dataSet: DTO_Employee[] = [];
+	const dataSet: Employee[] = [];
 	for (let i = 1; i <= count; i++) {
 		idCounter++;
 		const departmentId = i % 3;
@@ -88,8 +88,7 @@ const generateDataSet = (count: number) => {
 
 export const mockEmployees = generateDataSet(30);
 
-export function getEmployeeDetail (employeeId:number):DTO_EmployeeDetail | undefined {
-	console.log('Getting detail for employee ID:', employeeId);
+export function getEmployeeDetail (employeeId:number):EmployeeDetail | undefined {
 	const employee = mockEmployees.find(employee=>employee.id === employeeId);
 	if (!employee) return undefined;
 

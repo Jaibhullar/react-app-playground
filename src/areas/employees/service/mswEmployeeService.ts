@@ -13,15 +13,18 @@ const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.get
 export type RouteParams = EmployeeFilters & EmployeePagination;
 
 const getItems = getItemsFactory.get.json<GetEmployeesResponse, UrlParams<RouteParams>>(
-	({ routeParams }) => {
-		console.log(routeParams);
-
-		const { search, departmentIds, locationIds, roleIds, currentPage, pageSize } = routeParams;
+	({ queryParams }) => {
+		const search = queryParams.get('search') ?? '';
+		const departmentIds = queryParams.get('department') ?? 'all';
+		const locationIds = queryParams.get('location') ?? 'all';
+		const roleIds = queryParams.get('role') ?? 'all';
+		const currentPage = queryParams.get('currentPage') ?? '1';
+		const pageSize = queryParams.get('pageSize') ?? '10';
 
 		const filteredEmployees = mockEmployees.filter(employee => (departmentIds === 'all' || departmentIds?.split(',').map(Number).includes(employee.department.id))
 			&& (locationIds === 'all' || locationIds?.split(',').map(Number).includes(employee.location.id))
 			&& (roleIds === 'all' || roleIds?.split(',').map(Number).includes(employee.role.id))
-			&& (search === '' || employee.name.toLowerCase().includes(search.toLowerCase())));
+			&& (!search || employee.name.toLowerCase().includes(search.toLowerCase())));
 
 		const paginatedEmployees = paginateData(filteredEmployees, Number(currentPage), Number(pageSize));
 		return {
