@@ -2,43 +2,47 @@ import { DTO_Employee, DTO_EmployeeDetail } from './employeeService';
 
 let idCounter = 0;
 
-const departmentNames: Record<number, string> = {
-	0: 'Engineering',
-	1: 'Marketing',
-	2: 'Human Resources',
-};
+enum Department {
+	Engineering = 'Engineering',
+	Marketing = 'Marketing',
+	HumanResources = 'Human Resources',
+}
 
-const locationNames: Record<number, string> = {
-	0: 'San Francisco',
-	1: 'New York',
-};
+enum Location {
+	SanFrancisco = 'San Francisco',
+	NewYork = 'New York',
+}
 
-const roleNames: Record<number, string> = {
-	0: 'Software Engineer',
-	1: 'Product Manager',
-	2: 'Designer',
-	3: 'Data Analyst',
-};
+enum Role {
+	SoftwareEngineer = 'Software Engineer',
+	ProductManager = 'Product Manager',
+	Designer = 'Designer',
+	DataAnalyst = 'Data Analyst',
+}
 
-const employeeFirstNames = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Cameron', 'Dakota', 'Skyler', 'Jamie', 'Reese', 'Sage', 'Finley'];
-const employeeLastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Martinez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson'];
+const employeeNames = [
+	'Alex Smith', 'Jordan Johnson', 'Taylor Williams', 'Morgan Brown', 'Casey Jones',
+	'Riley Garcia', 'Quinn Miller', 'Avery Davis', 'Cameron Martinez', 'Dakota Wilson',
+	'Skyler Anderson', 'Jamie Thomas', 'Reese Taylor', 'Sage Moore', 'Finley Jackson',
+	'Alex Johnson', 'Jordan Williams', 'Taylor Brown', 'Morgan Jones', 'Casey Garcia',
+	'Riley Miller', 'Quinn Davis', 'Avery Martinez', 'Cameron Wilson', 'Dakota Anderson',
+	'Skyler Thomas', 'Jamie Taylor', 'Reese Moore', 'Sage Jackson', 'Finley Smith',
+];
 
 function getRealisticName(index: number): string {
-	const firstName = employeeFirstNames[index % employeeFirstNames.length];
-	const lastName = employeeLastNames[(index * 7) % employeeLastNames.length];
-	return `${firstName} ${lastName}`;
+	return employeeNames[index % employeeNames.length];
 }
 
 function getDepartmentName(id: number): string {
-	return departmentNames[id] ?? `Department ${id}`;
+	return Object.values(Department)[id] ?? `Department ${id}`;
 }
 
 function getLocationName(id: number): string {
-	return locationNames[id] ?? `Location ${id}`;
+	return Object.values(Location)[id] ?? `Location ${id}`;
 }
 
 function getRoleName(id: number): string {
-	return roleNames[id] ?? `Role ${id}`;
+	return Object.values(Role)[id] ?? `Role ${id}`;
 }
 
 function createData(name: string, departmentId: number, departmentName: string, locationId: number, locationName: string, roleId: number, roleName: string): DTO_Employee {
