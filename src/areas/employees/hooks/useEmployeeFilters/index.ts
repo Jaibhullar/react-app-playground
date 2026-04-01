@@ -13,7 +13,7 @@ export type UseEmployeeFiltersReturnType = {
 	isError: boolean,
 	addFilter: (filterName: MultiSelectFilterKeys, value: number) => void,
 	removeFilter: (filterName: MultiSelectFilterKeys) => void,
-	setSearchFilter: (value: string) => void,
+	searchEmployee: (value: string) => void,
 };
 
 export const useEmployeeFilters = (): UseEmployeeFiltersReturnType =>{
@@ -44,7 +44,7 @@ export const useEmployeeFilters = (): UseEmployeeFiltersReturnType =>{
 		});
 	};
 
-	const setSearchFilter = (value: string) => {
+	const searchEmployee = (value: string) => {
 		setFilters(prevFilters => ({
 			...prevFilters,
 			search: value,
@@ -58,6 +58,6 @@ export const useEmployeeFilters = (): UseEmployeeFiltersReturnType =>{
 		isError,
 		addFilter,
 		removeFilter,
-		setSearchFilter,
+		searchEmployee,
 	};
 };
