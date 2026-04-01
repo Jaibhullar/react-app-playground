@@ -14,7 +14,6 @@ export type RouteParams = EmployeeFilters & EmployeePagination;
 
 const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<RouteParams>>(
 	({ routeParams }) => {
-		console.log('Mock getEmployees called with params:', routeParams);
 		const { departmentIds, locationIds, roleIds, currentPage, pageSize } = routeParams;
 
 		const filteredEmployees = mockEmployees.filter(employee => (departmentIds === 'all' || departmentIds?.split(',').map(Number).includes(employee.department.id))
