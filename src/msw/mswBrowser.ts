@@ -3,6 +3,7 @@ import { setupWorker } from 'msw/browser';
 
 import { mswDemoItemService } from '@/areas/demo/service/mswDemoItemService';
 import { mswEmployeeDetailService } from '@/areas/employees/service/mswEmployeeDetailService';
+import { mswEmployeeFiltersService } from '@/areas/employees/service/mswEmployeeFiltersService';
 import { mswEmployeeService } from '@/areas/employees/service/mswEmployeeService';
 
 import { outputHandlersToConsole } from './core_msw';
@@ -13,6 +14,7 @@ function getActiveHandlers() {
 		mswDemoItemService,
 		mswEmployeeService,
 		mswEmployeeDetailService,
+		mswEmployeeFiltersService,
 	];
 	return handlers;
 }
