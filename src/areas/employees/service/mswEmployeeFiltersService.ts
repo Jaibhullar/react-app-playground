@@ -1,7 +1,8 @@
 
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { employeeFiltersServiceMeta, type GetEmployeeFiltersResponse } from './employeeService';
+import type { GetEmployeeFiltersResponse } from '../types';
+import { employeeFiltersServiceMeta } from './employeeService';
 import { mockEmployees } from './mockEmployeeData';
 
 const getEmployeeFiltersFactory = createMockResponseFactory(employeeFiltersServiceMeta.routes.getFilters);

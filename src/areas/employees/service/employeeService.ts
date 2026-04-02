@@ -1,39 +1,7 @@
 import { API_BASE_URL } from '@/common/constants';
 
-import type { Employee, EmployeeDetail, EmployeeFilters, EmployeePagination } from '../types';
+import type { GetEmployeeDetailRequest, GetEmployeeDetailResponse, GetEmployeeFiltersResponse, GetEmployeesRequest, GetEmployeesResponse } from '../types';
 
-export type GetEmployeesRequest = {
-	filters?: EmployeeFilters,
-	pagination?: EmployeePagination,
-};
-
-export type GetEmployeesResponse = {
-	employees: Employee[],
-	totalItems: number,
-	currentPage: number,
-	pageSize: number,
-	totalPages: number,
-};
-
-export type GetEmployeeDetailRequest = {
-	employeeId: number,
-};
-
-export type GetEmployeeDetailResponse = {
-	employee: EmployeeDetail | undefined,
-};
-
-export type GetEmployeeFiltersResponse = {
-	departments: {
-		id: number, name: string,
-	}[],
-	locations: {
-		id: number, name: string,
-	}[],
-	roles: {
-		id: number, name: string,
-	}[],
-};
 
 const getEmployeesRoute = '/employees' as const;
 

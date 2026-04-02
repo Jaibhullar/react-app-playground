@@ -3,7 +3,8 @@
 import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { employeeDetailServiceMeta, type GetEmployeeDetailRequest, type GetEmployeeDetailResponse } from './employeeService';
+import type { GetEmployeeDetailRequest, GetEmployeeDetailResponse } from '../types';
+import { employeeDetailServiceMeta } from './employeeService';
 import { getEmployeeDetail } from './mockEmployeeData';
 
 

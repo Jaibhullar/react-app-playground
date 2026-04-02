@@ -44,3 +44,36 @@ export type Hierarchy = {
 	subordinates: Employee[],
 	directPeers: Employee[],
 };
+
+export type GetEmployeesRequest = {
+	filters?: EmployeeFilters,
+	pagination?: EmployeePagination,
+};
+
+export type GetEmployeesResponse = {
+	employees: Employee[],
+	totalItems: number,
+	currentPage: number,
+	pageSize: number,
+	totalPages: number,
+};
+
+export type GetEmployeeDetailRequest = {
+	employeeId: number,
+};
+
+export type GetEmployeeDetailResponse = {
+	employee: EmployeeDetail | undefined,
+};
+
+export type GetEmployeeFiltersResponse = {
+	departments: {
+		id: number, name: string,
+	}[],
+	locations: {
+		id: number, name: string,
+	}[],
+	roles: {
+		id: number, name: string,
+	}[],
+};

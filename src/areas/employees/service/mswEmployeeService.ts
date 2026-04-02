@@ -3,7 +3,8 @@
 import { paginateData } from '@/common/utils/paginateData/paginateData';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { employeeServiceMeta, type GetEmployeesResponse } from './employeeService';
+import type { GetEmployeesResponse } from '../types';
+import { employeeServiceMeta } from './employeeService';
 import { mockEmployees } from './mockEmployeeData';
 
 const getEmployeesFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { executeGetEmployees, GetEmployeesRequest } from '../../service/employeeService';
-import type { Employee } from '../../types';
+import { executeGetEmployees } from '../../service/employeeService';
+import type { Employee, GetEmployeesRequest } from '../../types';
 
 export type UseEmployeesReturnType = {
 	employees: Employee[] | undefined,
