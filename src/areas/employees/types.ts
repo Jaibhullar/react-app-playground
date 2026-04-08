@@ -77,3 +77,11 @@ export type GetEmployeeFiltersResponse = {
 		id: number, name: string,
 	}[],
 };
+
+export type DeleteEmployeeRequest = {
+	employeeId: number,
+};
+
+export type DeleteEmployeeResponse = {
+	success: boolean,
+};

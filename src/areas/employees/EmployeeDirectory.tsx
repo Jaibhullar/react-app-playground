@@ -9,7 +9,7 @@ import { useEmployees } from './hooks/useEmployees';
 export const EmployeeDirectory = () => {
 	const { filters, addFilter, removeFilter, filterOptions } = useEmployeeFilters();
 	const { currentPage, pageSize, goToPage, changePageSize } = usePagination();
-	const { employees, totalPages, totalItems, isLoading, isError } = useEmployees({ filters, pagination: { currentPage, pageSize } });
+	const { employees, totalPages, totalItems, isLoading, isError, deleteEmployee, createEmployee, updateEmployee } = useEmployees({ filters, pagination: { currentPage, pageSize } });
 	useEffect(()=>{
 	}, [filterOptions]);
 	if(isLoading) {
@@ -33,9 +33,12 @@ export const EmployeeDirectory = () => {
 				{employees.map(employee => (
 					<li key={employee.id}>
 						{employee.name} - {employee.department.name} - {employee.location.name} - {employee.role.name} - ID: {employee.id}
+						<button onClick={() => deleteEmployee(employee.id)}>Delete</button>
+						<button onClick={() => updateEmployee({ ...employee, name: employee.name + ' Updated' })}>Update</button>
 					</li>
 				))}
 			</ul>
+			<button onClick={() => createEmployee({ name: 'New Employee', department: { name: 'New Department', id: 99 }, location: { name: 'New Location', id: 99 }, role: { name: 'New Role', id: 99 } })}>Create Employee</button>
 			{totalPages && (
 				<div className='pagination-controls'>
 					{Array.from({ length: totalPages }, (_, index) => (

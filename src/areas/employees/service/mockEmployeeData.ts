@@ -86,10 +86,48 @@ const generateDataSet = (count: number) => {
 	return dataSet;
 };
 
-export const mockEmployees = generateDataSet(30);
+let employees = generateDataSet(30);
+let nextId = 31;
+
+export const employeeDb = {
+	getAll: (): Employee[] => [...employees],
+
+	getById: (id:number): Employee | undefined => employees.find(emp=>emp.id === id),
+
+	create: (newEmployee: Omit<Employee, 'id'>): Employee => {
+		const employee: Employee = {
+			id: nextId,
+			...newEmployee,
+		};
+		employees.push(employee);
+		nextId++;
+		return employee;
+	},
+	update: (employee:Employee): Employee | null => {
+		const index = employees.findIndex(emp=>emp.id === employee.id);
+		if(index === -1) return null;
+		employees[index] = {
+			...employee,
+		};
+		return employees[index];
+	},
+
+	delete: (id: number):boolean => {
+		const index = employees.findIndex(e => e.id === id);
+		if (index === -1) return false;
+		employees.splice(index, 1);
+		return true;
+	},
+
+	reset: (): void => {
+		employees = generateDataSet(30);
+		nextId = 31;
+	},
+};
+
 
 export function getEmployeeDetail (employeeId:number):EmployeeDetail | undefined {
-	const employee = mockEmployees.find(employee=>employee.id === employeeId);
+	const employee = employees.find(employee=>employee.id === employeeId);
 	if (!employee) return undefined;
 
 	return {
@@ -98,11 +136,11 @@ export function getEmployeeDetail (employeeId:number):EmployeeDetail | undefined
 		phone: `555-01${employee.id.toString().padStart(2, '0')}`,
 		hierarchy: {
 			// Find some managers (could be employees with lower IDs, or same dept)
-			managers: mockEmployees.filter(e => e.id < employee.id && e.department.id === employee.department.id).slice(0, 1),
+			managers: employees.filter(e => e.id < employee.id && e.department.id === employee.department.id).slice(0, 1),
 			// Find subordinates (higher IDs, same dept)
-			subordinates: mockEmployees.filter(e => e.id > employee.id && e.department.id === employee.department.id).slice(0, 3),
+			subordinates: employees.filter(e => e.id > employee.id && e.department.id === employee.department.id).slice(0, 3),
 			// Find peers (same role, different person)
-			directPeers: mockEmployees.filter(e => e.role.id === employee.role.id && e.id !== employee.id).slice(0, 2),
+			directPeers: employees.filter(e => e.role.id === employee.role.id && e.id !== employee.id).slice(0, 2),
 		},
 	};
 }

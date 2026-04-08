@@ -5,7 +5,7 @@ import { createMockResponseFactory } from '@/msw/mswUtils';
 
 import type { GetEmployeesResponse } from '../types';
 import { employeeServiceMeta } from './employeeService';
-import { mockEmployees } from './mockEmployeeData';
+import { employeeDb } from './mockEmployeeData';
 
 const getEmployeesFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
 
@@ -23,7 +23,7 @@ const getItems = getEmployeesFactory.get.json<GetEmployeesResponse>(
 		const locationIdArray = locationIds !== 'all' ? locationIds.split(',').map(Number) : null;
 		const roleIdArray = roleIds !== 'all' ? roleIds.split(',').map(Number) : null;
 
-		const filteredEmployees = mockEmployees.filter(employee => (departmentIdArray === null || departmentIdArray.includes(employee.department.id))
+		const filteredEmployees = employeeDb.getAll().filter(employee => (departmentIdArray === null || departmentIdArray.includes(employee.department.id))
 			&& (locationIdArray === null || locationIdArray.includes(employee.location.id))
 			&& (roleIdArray === null || roleIdArray.includes(employee.role.id))
 			&& (!search || employee.name.toLowerCase().includes(search.toLowerCase())));

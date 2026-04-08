@@ -1,6 +1,6 @@
 import { API_BASE_URL } from '@/common/constants';
 
-import type { GetEmployeeDetailRequest, GetEmployeeDetailResponse, GetEmployeeFiltersResponse, GetEmployeesRequest, GetEmployeesResponse } from '../types';
+import type { Employee, GetEmployeeDetailRequest, GetEmployeeDetailResponse, GetEmployeeFiltersResponse, GetEmployeesRequest, GetEmployeesResponse } from '../types';
 
 
 const getEmployeesRoute = '/employees' as const;
@@ -8,6 +8,12 @@ const getEmployeesRoute = '/employees' as const;
 const getEmployeeDetailRoute = '/employee/:employeeId' as const;
 
 const getEmployeeFiltersRoute = '/employeeFilters' as const;
+
+const deleteEmployeeRoute = '/employee/:employeeId' as const;
+
+const createEmployeeRoute = '/employee' as const;
+
+const updateEmployeeRoute = '/employee/:employeeId' as const;
 
 export async function executeGetEmployees(request: GetEmployeesRequest) {
 	const url = getEmployeesQueryUrl(request);
@@ -70,8 +76,56 @@ export async function executeGetEmployeeFilters() {
 	return response;
 }
 
+export async function executeDeleteEmployee(employeeId:number) {
+	const url = `${API_BASE_URL}${deleteEmployeeRoute.replace(':employeeId', String(employeeId))}`;
+	const resp = await fetch(url, { method: 'DELETE' });
+	if (!resp.ok) {
+		throw new Error(`Failed to delete employee: ${resp.status}`);
+	}
+	return true;
+}
+
+export async function executeCreateEmployee(newEmployee: Omit<Employee, 'id'>) {
+	const url = `${API_BASE_URL}${createEmployeeRoute}`;
+	const resp = await fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(newEmployee),
+	});
+	if (!resp.ok) {
+		throw new Error(`Failed to create employee: ${resp.status}`);
+	}
+	const json = await resp.json();
+	return json as Employee;
+}
+
+export async function executeUpdateEmployee(employee:Employee) {
+	const url = `${API_BASE_URL}${updateEmployeeRoute.replace(':employeeId', String(employee.id))}`;
+	const resp = await fetch(url, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(employee),
+	});
+	if (!resp.ok) {
+		throw new Error(`Failed to update employee: ${resp.status}`);
+	}
+	const json = await resp.json();
+	return json as Employee;
+}
+
+
 export const employeeServiceMeta = { routes: { getItems: getEmployeesRoute } };
 
 export const employeeDetailServiceMeta = { routes: { getItemDetail: getEmployeeDetailRoute } };
 
 export const employeeFiltersServiceMeta = { routes: { getFilters: getEmployeeFiltersRoute } };
+
+export const employeeDeleteServiceMeta = { routes: { deleteItem: getEmployeeDetailRoute } };
+
+export const employeeCreateServiceMeta = { routes: { createItem: createEmployeeRoute } };
+
+export const employeeUpdateServiceMeta = { routes: { updateItem: updateEmployeeRoute } };

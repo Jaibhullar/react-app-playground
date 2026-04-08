@@ -3,13 +3,13 @@ import { createMockResponseFactory } from '@/msw/mswUtils';
 
 import type { GetEmployeeFiltersResponse } from '../types';
 import { employeeFiltersServiceMeta } from './employeeService';
-import { mockEmployees } from './mockEmployeeData';
+import { employeeDb } from './mockEmployeeData';
 
 const getEmployeeFiltersFactory = createMockResponseFactory(employeeFiltersServiceMeta.routes.getFilters);
 
 const getFilters = getEmployeeFiltersFactory.get.json<GetEmployeeFiltersResponse>(
 	() => {
-		const filters = mockEmployees.reduce((acc:GetEmployeeFiltersResponse, employee) => {
+		const filters = employeeDb.getAll().reduce((acc:GetEmployeeFiltersResponse, employee) => {
 			if (!acc.departments.some(dept => dept.id === employee.department.id)) {
 				acc.departments.push(employee.department);
 			}
