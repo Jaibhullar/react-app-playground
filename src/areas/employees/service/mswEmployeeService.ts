@@ -1,23 +1,32 @@
 
 
-import { paginateData } from '@/common/utils/paginateData';
-import { UrlParams } from '@/msw/core_msw';
+import { paginateData } from '@/common/utils/paginateData/paginateData';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { type DTO_GetEmployeesResponse, employeeServiceMeta, type GetEmployeesFilters, type GetEmployeesPagination } from './employeeService';
-import { mockEmployees } from './mockEmployeeData';
+import type { GetEmployeesResponse } from '../types';
+import { employeeServiceMeta } from './employeeService';
+import { employeeDb } from './mockEmployeeData';
 
-const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
+const getEmployeesFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
 
-export type RouteParams = GetEmployeesFilters & GetEmployeesPagination;
+const getItems = getEmployeesFactory.get.json<GetEmployeesResponse>(
+	({ queryParams }) => {
+		const search = queryParams.get('search') ?? '';
+		const departmentIds = queryParams.get('department') ?? 'all';
+		const locationIds = queryParams.get('location') ?? 'all';
+		const roleIds = queryParams.get('role') ?? 'all';
+		const currentPage = queryParams.get('currentPage') ?? '1';
+		const pageSize = queryParams.get('pageSize') ?? '10';
 
-const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<RouteParams>>(
-	({ routeParams }) => {
-		const { departmentId, locationId, roleId, currentPage, pageSize } = routeParams;
+		// Parse filter IDs once before filtering
+		const departmentIdArray = departmentIds !== 'all' ? departmentIds.split(',').map(Number) : null;
+		const locationIdArray = locationIds !== 'all' ? locationIds.split(',').map(Number) : null;
+		const roleIdArray = roleIds !== 'all' ? roleIds.split(',').map(Number) : null;
 
-		const filteredEmployees = mockEmployees.filter(employee => (departmentId === 'all' || employee.department.id === Number(departmentId))
-			&& (locationId === 'all' || employee.location.id === Number(locationId))
-			&& (roleId === 'all' || employee.role.id === Number(roleId)));
+		const filteredEmployees = employeeDb.getAll().filter(employee => (departmentIdArray === null || departmentIdArray.includes(employee.department.id))
+			&& (locationIdArray === null || locationIdArray.includes(employee.location.id))
+			&& (roleIdArray === null || roleIdArray.includes(employee.role.id))
+			&& (!search || employee.name.toLowerCase().includes(search.toLowerCase())));
 
 		const paginatedEmployees = paginateData(filteredEmployees, Number(currentPage), Number(pageSize));
 		return {
