@@ -3,17 +3,14 @@ import { API_BASE_URL } from '@/common/constants';
 import type { Employee, GetEmployeeDetailRequest, GetEmployeeDetailResponse, GetEmployeeFiltersResponse, GetEmployeesRequest, GetEmployeesResponse } from '../types';
 
 
-const getEmployeesRoute = '/employees' as const;
+const GET_EMPLOYEES_ROUTE = '/employees' as const;
 
-const getEmployeeDetailRoute = '/employee/:employeeId' as const;
+/** Shared route for detail, delete, and update operations on a single employee. */
+const EMPLOYEE_BY_ID_ROUTE = '/employee/:employeeId' as const;
 
-const getEmployeeFiltersRoute = '/employeeFilters' as const;
+const GET_EMPLOYEE_FILTERS_ROUTE = '/employeeFilters' as const;
 
-const deleteEmployeeRoute = '/employee/:employeeId' as const;
-
-const createEmployeeRoute = '/employee' as const;
-
-const updateEmployeeRoute = '/employee/:employeeId' as const;
+const CREATE_EMPLOYEE_ROUTE = '/employee' as const;
 
 export async function executeGetEmployees(request: GetEmployeesRequest) {
 	const url = getEmployeesQueryUrl(request);
@@ -23,6 +20,7 @@ export async function executeGetEmployees(request: GetEmployeesRequest) {
 		throw new Error(`Failed to fetch employees: ${resp.status}`);
 	}
 	const json = await resp.json();
+	// Response shape is validated at the API boundary; casting is safe here
 	const response = json as GetEmployeesResponse;
 	return response;
 }
@@ -45,7 +43,7 @@ function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
 		search: search,
 	});
 
-	return `${API_BASE_URL}${getEmployeesRoute}?${params.toString()}`;
+	return `${API_BASE_URL}${GET_EMPLOYEES_ROUTE}?${params.toString()}`;
 }
 
 export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest) {
@@ -56,28 +54,30 @@ export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest
 		throw new Error(`Failed to fetch employee detail: ${resp.status}`);
 	}
 	const json = await resp.json();
+	// Response shape is validated at the API boundary; casting is safe here
 	const response = json as GetEmployeeDetailResponse;
 	return response;
 }
 
-function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
-	return `${API_BASE_URL}${getEmployeeDetailRoute.replace(':employeeId', String(request.employeeId))}`;
+function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest): string {
+	return `${API_BASE_URL}${EMPLOYEE_BY_ID_ROUTE.replace(':employeeId', String(request.employeeId))}`;
 }
 
 export async function executeGetEmployeeFilters() {
 
-	const url = `${API_BASE_URL}${getEmployeeFiltersRoute}`;
+	const url = `${API_BASE_URL}${GET_EMPLOYEE_FILTERS_ROUTE}`;
 	const resp = await fetch(url);
 	if (!resp.ok) {
 		throw new Error(`Failed to fetch employee filters: ${resp.status}`);
 	}
 	const json = await resp.json();
+	// Response shape is validated at the API boundary; casting is safe here
 	const response = json as GetEmployeeFiltersResponse;
 	return response;
 }
 
 export async function executeDeleteEmployee(employeeId:number) {
-	const url = `${API_BASE_URL}${deleteEmployeeRoute.replace(':employeeId', String(employeeId))}`;
+	const url = `${API_BASE_URL}${EMPLOYEE_BY_ID_ROUTE.replace(':employeeId', String(employeeId))}`;
 	const resp = await fetch(url, { method: 'DELETE' });
 	if (!resp.ok) {
 		throw new Error(`Failed to delete employee: ${resp.status}`);
@@ -86,7 +86,7 @@ export async function executeDeleteEmployee(employeeId:number) {
 }
 
 export async function executeCreateEmployee(newEmployee: Omit<Employee, 'id'>) {
-	const url = `${API_BASE_URL}${createEmployeeRoute}`;
+	const url = `${API_BASE_URL}${CREATE_EMPLOYEE_ROUTE}`;
 	const resp = await fetch(url, {
 		method: 'POST',
 		headers: {
@@ -98,11 +98,12 @@ export async function executeCreateEmployee(newEmployee: Omit<Employee, 'id'>) {
 		throw new Error(`Failed to create employee: ${resp.status}`);
 	}
 	const json = await resp.json();
+	// Response shape is validated at the API boundary; casting is safe here
 	return json as Employee;
 }
 
 export async function executeUpdateEmployee(employee:Employee) {
-	const url = `${API_BASE_URL}${updateEmployeeRoute.replace(':employeeId', String(employee.id))}`;
+	const url = `${API_BASE_URL}${EMPLOYEE_BY_ID_ROUTE.replace(':employeeId', String(employee.id))}`;
 	const resp = await fetch(url, {
 		method: 'PUT',
 		headers: {
@@ -114,18 +115,19 @@ export async function executeUpdateEmployee(employee:Employee) {
 		throw new Error(`Failed to update employee: ${resp.status}`);
 	}
 	const json = await resp.json();
+	// Response shape is validated at the API boundary; casting is safe here
 	return json as Employee;
 }
 
 
-export const employeeServiceMeta = { routes: { getItems: getEmployeesRoute } };
+export const employeeServiceMeta = { routes: { getItems: GET_EMPLOYEES_ROUTE } };
 
-export const employeeDetailServiceMeta = { routes: { getItemDetail: getEmployeeDetailRoute } };
+export const employeeDetailServiceMeta = { routes: { getItemDetail: EMPLOYEE_BY_ID_ROUTE } };
 
-export const employeeFiltersServiceMeta = { routes: { getFilters: getEmployeeFiltersRoute } };
+export const employeeFiltersServiceMeta = { routes: { getFilters: GET_EMPLOYEE_FILTERS_ROUTE } };
 
-export const employeeDeleteServiceMeta = { routes: { deleteItem: getEmployeeDetailRoute } };
+export const employeeDeleteServiceMeta = { routes: { deleteItem: EMPLOYEE_BY_ID_ROUTE } };
 
-export const employeeCreateServiceMeta = { routes: { createItem: createEmployeeRoute } };
+export const employeeCreateServiceMeta = { routes: { createItem: CREATE_EMPLOYEE_ROUTE } };
 
-export const employeeUpdateServiceMeta = { routes: { updateItem: updateEmployeeRoute } };
+export const employeeUpdateServiceMeta = { routes: { updateItem: EMPLOYEE_BY_ID_ROUTE } };

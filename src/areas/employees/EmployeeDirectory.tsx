@@ -4,12 +4,14 @@ import { useEffect } from 'react';
 import { usePagination } from '@/common/hooks/usePagination';
 
 import { useEmployeeFilters } from './hooks/useEmployeeFilters';
+import { useEmployeeMutations } from './hooks/useEmployeeMutations';
 import { useEmployees } from './hooks/useEmployees';
 
 export const EmployeeDirectory = () => {
 	const { filters, addFilter, removeFilter, filterOptions } = useEmployeeFilters();
 	const { currentPage, pageSize, goToPage, changePageSize } = usePagination();
-	const { employees, totalPages, totalItems, isLoading, isError, deleteEmployee, createEmployee, updateEmployee } = useEmployees({ filters, pagination: { currentPage, pageSize } });
+	const { employees, totalPages, totalItems, isLoading, isError } = useEmployees({ filters, pagination: { currentPage, pageSize } });
+	const { deleteEmployee, createEmployee, updateEmployee } = useEmployeeMutations();
 	useEffect(()=>{
 	}, [filterOptions]);
 	if(isLoading) {

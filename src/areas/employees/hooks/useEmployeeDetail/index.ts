@@ -3,13 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { executeGetEmployeeDetail } from '../../service/employeeService';
 import type { EmployeeDetail } from '../../types';
 
-export type UseEmployeeDetailReturnType = {
+export type UseEmployeeDetailReturn = {
 	employeeDetailData: EmployeeDetail | undefined,
 	isLoading: boolean,
 	isError: boolean,
 };
 
-export const useEmployeeDetail = (employeeId:number)=>{
+export const useEmployeeDetail = (employeeId: number): UseEmployeeDetailReturn => {
 	const { data: employeeDetailData, isLoading, isError } = useQuery({
 		queryKey: ['employeeDetail', employeeId],
 		queryFn: ()=>executeGetEmployeeDetail({ employeeId }),
