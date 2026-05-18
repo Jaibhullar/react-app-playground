@@ -1,3 +1,5 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 /**
 *Blocks output for errors for tests which expect error to avoid confusing/noisy output
 */
@@ -21,3 +23,18 @@ export function blockErrorOutput() {
 export function blockWarningOutput() {
 	return vitest.spyOn(console, 'warn').mockImplementation(() => null);
 }
+
+
+export const wrapper = ({ children }: {
+	children: React.ReactNode,
+}) => {
+	const queryClient = new QueryClient({
+		defaultOptions: { queries: { retry: false } },
+	});
+
+	return (
+		<QueryClientProvider client={queryClient}>
+			{children}
+		</QueryClientProvider>
+	);
+};
