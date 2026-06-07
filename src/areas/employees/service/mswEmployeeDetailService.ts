@@ -3,13 +3,14 @@
 import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory } from '@/msw/mswUtils';
 
-import { DTO_GetEmployeeDetailResponse, employeeDetailServiceMeta, type GetEmployeeDetailRequest } from './employeeService';
+import type { GetEmployeeDetailRequest, GetEmployeeDetailResponse } from '../types';
+import { employeeDetailServiceMeta } from './employeeService';
 import { getEmployeeDetail } from './mockEmployeeData';
 
 
-const getItemFactory = createMockResponseFactory(employeeDetailServiceMeta.routes.getItemDetail);
+const getEmployeeDetailFactory = createMockResponseFactory(employeeDetailServiceMeta.routes.getItemDetail);
 
-const getItem = getItemFactory.get.json<DTO_GetEmployeeDetailResponse, UrlParams<GetEmployeeDetailRequest>>(
+const getItem = getEmployeeDetailFactory.get.json<GetEmployeeDetailResponse, UrlParams<GetEmployeeDetailRequest>>(
 	({ routeParams }) => ({
 		employee: getEmployeeDetail(Number(routeParams.employeeId)),
 	}));

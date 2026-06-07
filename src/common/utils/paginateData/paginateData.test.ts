@@ -1,4 +1,4 @@
-import { paginateData } from '.';
+import { paginateData } from './paginateData';
 
 const mockData = [
 	{ id: 1, name: 'Item 1' },
