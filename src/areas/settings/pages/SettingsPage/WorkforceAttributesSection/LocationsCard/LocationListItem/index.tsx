@@ -2,11 +2,8 @@ import { Check, MapPin, Pencil, Trash2, Users, X } from 'lucide-react';
 
 import type { LocationWithCount } from '@/areas/employees/service/locationService';
 import { Button } from '@/common/components/ui/Button';
-import { Tooltip } from '@/common/components/ui/Tooltip';
 
 import css from './LocationListItem.module.scss';
-
-const CANNOT_DELETE_TOOLTIP = 'Cannot delete a location with assigned employees' as const;
 
 const testIds = {
 	item: (id: number) => `location-list-item-${id}`,
@@ -110,18 +107,16 @@ export const LocationListItem = ({
 				>
 					<Pencil />
 				</Button>
-				<Tooltip content={CANNOT_DELETE_TOOLTIP} show={hasAssignedEmployees}>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => onDelete(location.id)}
-						disabled={hasAssignedEmployees || isDeletePending}
-						data-testid={testIds.deleteButton(location.id)}
-						aria-label={`Delete ${location.name}`}
-					>
-						<Trash2 />
-					</Button>
-				</Tooltip>
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => onDelete(location.id)}
+					disabled={hasAssignedEmployees || isDeletePending}
+					data-testid={testIds.deleteButton(location.id)}
+					aria-label={`Delete ${location.name}`}
+				>
+					<Trash2 />
+				</Button>
 			</div>
 		</li>
 	);

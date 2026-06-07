@@ -2,11 +2,8 @@ import { Check, Pencil, Trash2, Users, X } from 'lucide-react';
 
 import type { DepartmentWithCount } from '@/areas/employees/service/departmentService';
 import { Button } from '@/common/components/ui/Button';
-import { Tooltip } from '@/common/components/ui/Tooltip';
 
 import css from './DepartmentListItem.module.scss';
-
-const CANNOT_DELETE_TOOLTIP = 'Cannot delete a department with assigned employees' as const;
 
 const testIds = {
 	item: (id: number) => `department-list-item-${id}`,
@@ -109,18 +106,16 @@ export const DepartmentListItem = ({
 				>
 					<Pencil />
 				</Button>
-				<Tooltip content={CANNOT_DELETE_TOOLTIP} show={hasAssignedEmployees}>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => onDelete(department.id)}
-						disabled={hasAssignedEmployees || isDeletePending}
-						data-testid={testIds.deleteButton(department.id)}
-						aria-label={`Delete ${department.name}`}
-					>
-						<Trash2 />
-					</Button>
-				</Tooltip>
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => onDelete(department.id)}
+					disabled={hasAssignedEmployees || isDeletePending}
+					data-testid={testIds.deleteButton(department.id)}
+					aria-label={`Delete ${department.name}`}
+				>
+					<Trash2 />
+				</Button>
 			</div>
 		</li>
 	);

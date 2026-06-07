@@ -2,11 +2,8 @@ import { Briefcase, Check, Pencil, Trash2, Users, X } from 'lucide-react';
 
 import type { RoleWithCount } from '@/areas/employees/service/roleService';
 import { Button } from '@/common/components/ui/Button';
-import { Tooltip } from '@/common/components/ui/Tooltip';
 
 import css from './RoleListItem.module.scss';
-
-const CANNOT_DELETE_TOOLTIP = 'Cannot delete a role with assigned employees' as const;
 
 const testIds = {
 	item: (id: number) => `role-list-item-${id}`,
@@ -110,18 +107,16 @@ export const RoleListItem = ({
 				>
 					<Pencil />
 				</Button>
-				<Tooltip content={CANNOT_DELETE_TOOLTIP} show={hasAssignedEmployees}>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => onDelete(role.id)}
-						disabled={hasAssignedEmployees || isDeletePending}
-						data-testid={testIds.deleteButton(role.id)}
-						aria-label={`Delete ${role.name}`}
-					>
-						<Trash2 />
-					</Button>
-				</Tooltip>
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => onDelete(role.id)}
+					disabled={hasAssignedEmployees || isDeletePending}
+					data-testid={testIds.deleteButton(role.id)}
+					aria-label={`Delete ${role.name}`}
+				>
+					<Trash2 />
+				</Button>
 			</div>
 		</li>
 	);
