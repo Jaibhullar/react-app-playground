@@ -11,10 +11,12 @@ import { DepartmentListItem } from './DepartmentListItem';
 import css from './DepartmentsCard.module.scss';
 
 const DUPLICATE_NAME_ERROR = 'A department with this name already exists' as const;
+const DEFAULT_DEPARTMENT_COLOR = '#6366f1' as const;
 
 type EditingState = {
 	departmentId: number,
 	editValue: string,
+	editColor: string,
 	nameError: string | null,
 } | null;
 
@@ -33,11 +35,15 @@ export const DepartmentsCard = () => {
 	const { departments, isLoading, isError } = useDepartments();
 
 	const [newDepartmentName, setNewDepartmentName] = useState('');
+	const [newDepartmentColor, setNewDepartmentColor] = useState<string>(DEFAULT_DEPARTMENT_COLOR);
 	const [newDepartmentNameError, setNewDepartmentNameError] = useState<string | null>(null);
 	const [editingState, setEditingState] = useState<EditingState>(null);
 
 	const { handleCreateDepartment, handleUpdateDepartment, handleDeleteDepartment, isCreatePending, isUpdatePending, isDeletePending } = useDepartmentActions({
-		onCreateSuccess: () => setNewDepartmentName(''),
+		onCreateSuccess: () => {
+			setNewDepartmentName('');
+			setNewDepartmentColor(DEFAULT_DEPARTMENT_COLOR);
+		},
 		onUpdateSuccess: () => setEditingState(null),
 	});
 
@@ -49,8 +55,8 @@ export const DepartmentsCard = () => {
 			return;
 		}
 		setNewDepartmentNameError(null);
-		handleCreateDepartment(trimmedName);
-	}, [newDepartmentName, departments, handleCreateDepartment]);
+		handleCreateDepartment(trimmedName, newDepartmentColor);
+	}, [newDepartmentName, newDepartmentColor, departments, handleCreateDepartment]);
 
 	const handleNewNameChange = useCallback((value: string) => {
 		setNewDepartmentName(value);
@@ -60,13 +66,20 @@ export const DepartmentsCard = () => {
 	const handleEditStart = useCallback((departmentId: number) => {
 		const department = departments.find((d: DepartmentWithCount) => d.id === departmentId);
 		if (!department) return;
-		setEditingState({ departmentId, editValue: department.name, nameError: null });
+		setEditingState({ departmentId, editValue: department.name, editColor: department.color ?? DEFAULT_DEPARTMENT_COLOR, nameError: null });
 	}, [departments]);
 
 	const handleEditValueChange = useCallback((value: string) => {
 		setEditingState((prev) => {
 			if (!prev) return null;
 			return { ...prev, editValue: value, nameError: null };
+		});
+	}, []);
+
+	const handleEditColorChange = useCallback((color: string) => {
+		setEditingState((prev) => {
+			if (!prev) return null;
+			return { ...prev, editColor: color };
 		});
 	}, []);
 
@@ -78,7 +91,7 @@ export const DepartmentsCard = () => {
 			setEditingState((prev) => prev ? { ...prev, nameError: DUPLICATE_NAME_ERROR } : null);
 			return;
 		}
-		handleUpdateDepartment(editingState.departmentId, trimmedName);
+		handleUpdateDepartment(editingState.departmentId, trimmedName, editingState.editColor);
 	}, [editingState, departments, handleUpdateDepartment]);
 
 	const handleEditCancel = useCallback(() => {
@@ -101,30 +114,35 @@ export const DepartmentsCard = () => {
 				</div>
 			</div>
 
-			<div className={css.addRow}>
-				<div className={css.addInputWrapper}>
-					<input
-						className={css.addInput}
-						placeholder="New department name"
-						value={newDepartmentName}
-						onChange={(e) => handleNewNameChange(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter') handleAdd();
-						}}
-						data-testid={testIds.addInput}
-						aria-label="New department name"
-					/>
-					{newDepartmentNameError && <p className={css.errorText}>{newDepartmentNameError}</p>}
-				</div>
-				<Button
-					onClick={handleAdd}
-					disabled={!newDepartmentName.trim() || isCreatePending}
-					data-testid={testIds.addButton}
-					className={css.addButton}
-				>
-					<Plus />
-					Add
-				</Button>
+			<div className={css.addRow}>			<input
+				type="color"
+				className={css.colorInput}
+				value={newDepartmentColor}
+				onChange={(e) => setNewDepartmentColor(e.target.value)}
+				aria-label="New department colour"
+			/>				<div className={css.addInputWrapper}>
+				<input
+					className={css.addInput}
+					placeholder="New department name"
+					value={newDepartmentName}
+					onChange={(e) => handleNewNameChange(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') handleAdd();
+					}}
+					data-testid={testIds.addInput}
+					aria-label="New department name"
+				/>
+				{newDepartmentNameError && <p className={css.errorText}>{newDepartmentNameError}</p>}
+			</div>
+			<Button
+				onClick={handleAdd}
+				disabled={!newDepartmentName.trim() || isCreatePending}
+				data-testid={testIds.addButton}
+				className={css.addButton}
+			>
+				<Plus />
+				Add
+			</Button>
 			</div>
 
 			{isLoading && <p className={css.stateMessage}>Loading departments…</p>}
@@ -140,8 +158,10 @@ export const DepartmentsCard = () => {
 								department={department}
 								isEditing={activeEdit !== null}
 								editValue={activeEdit?.editValue ?? ''}
+								editColor={activeEdit?.editColor ?? (department.color ?? DEFAULT_DEPARTMENT_COLOR)}
 								editNameError={activeEdit?.nameError ?? undefined}
 								onEditValueChange={handleEditValueChange}
+								onEditColorChange={handleEditColorChange}
 								onEditStart={handleEditStart}
 								onEditConfirm={handleEditConfirm}
 								onEditCancel={handleEditCancel}

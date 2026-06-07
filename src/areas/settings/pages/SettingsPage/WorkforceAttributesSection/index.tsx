@@ -11,10 +11,10 @@ export const WorkforceAttributesSection = () => (
 			<p>Manage the departments, locations and roles available when creating or editing employees.</p>
 		</div>
 		<div className={css.cards}>
-			<DepartmentsCard />
+			<RolesCard />
 			<LocationsCard />
 			<div className={css.fullWidth}>
-				<RolesCard />
+				<DepartmentsCard />
 			</div>
 		</div>
 	</section>

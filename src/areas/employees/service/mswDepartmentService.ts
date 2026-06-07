@@ -20,13 +20,13 @@ const getDepartmentsHandler = getDepartmentsFactory.get.json<GetDepartmentsRespo
 
 const createDepartmentHandler = getDepartmentsFactory.post.json<CreateDepartmentRequest, void>(
 	({ content }) => {
-		addDepartment(content.name);
+		addDepartment(content.name, content.color);
 	}
 );
 
-const updateDepartmentHandler = departmentFactory.put.json<Pick<UpdateDepartmentRequest, 'name'>, void, UrlParams<DepartmentRouteParams>>(
+const updateDepartmentHandler = departmentFactory.put.json<Pick<UpdateDepartmentRequest, 'name' | 'color'>, void, UrlParams<DepartmentRouteParams>>(
 	({ content, routeParams }) => {
-		updateDepartment(Number(routeParams.departmentId), content.name);
+		updateDepartment(Number(routeParams.departmentId), content.name, content.color);
 	}
 );
 

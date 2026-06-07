@@ -18,8 +18,10 @@ export type DepartmentListItemProps = {
 	department: DepartmentWithCount,
 	isEditing: boolean,
 	editValue: string,
+	editColor: string,
 	editNameError?: string,
 	onEditValueChange: (value: string) => void,
+	onEditColorChange: (color: string) => void,
 	onEditStart: (departmentId: number) => void,
 	onEditConfirm: () => void,
 	onEditCancel: () => void,
@@ -32,8 +34,10 @@ export const DepartmentListItem = ({
 	department,
 	isEditing,
 	editValue,
+	editColor,
 	editNameError,
 	onEditValueChange,
+	onEditColorChange,
 	onEditStart,
 	onEditConfirm,
 	onEditCancel,
@@ -46,77 +50,87 @@ export const DepartmentListItem = ({
 	if (isEditing) {
 		return (
 			<li className={css.item} data-testid={testIds.item(department.id)}>
-				<div className={css.editRow}>
-					<div className={css.editInputWrapper}>
-						<input
-							className={css.editInput}
-							value={editValue}
-							onChange={(e) => onEditValueChange(e.target.value)}
-							onKeyDown={(e) => {
-								if (e.key === 'Enter') onEditConfirm();
-								if (e.key === 'Escape') onEditCancel();
-							}}
-							data-testid={testIds.editInput(department.id)}
-							aria-label={`Edit department name for ${department.name}`}
-							aria-invalid={!!editNameError}
-							autoFocus
-						/>
-						{editNameError && <p className={css.errorText}>{editNameError}</p>}
-					</div>
-					<div className={css.actions}>
-						<Button
-							variant="default"
-							size="icon"
-							onClick={onEditConfirm}
-							disabled={isUpdatePending}
-							data-testid={testIds.editConfirmButton(department.id)}
-							aria-label="Confirm edit"
-						>
-							<Check />
-						</Button>
-						<Button
-							variant="outline"
-							size="icon"
-							onClick={onEditCancel}
-							data-testid={testIds.editCancelButton(department.id)}
-							aria-label="Cancel edit"
-						>
-							<X />
-						</Button>
-					</div>
+				<div className={css.editRow}>				<input
+					type="color"
+					className={css.colorInput}
+					value={editColor}
+					onChange={(e) => onEditColorChange(e.target.value)}
+					aria-label="Department colour"
+				/>					<div className={css.editInputWrapper}>
+					<input
+						className={css.editInput}
+						value={editValue}
+						onChange={(e) => onEditValueChange(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') onEditConfirm();
+							if (e.key === 'Escape') onEditCancel();
+						}}
+						data-testid={testIds.editInput(department.id)}
+						aria-label={`Edit department name for ${department.name}`}
+						aria-invalid={!!editNameError}
+						autoFocus
+					/>
+					{editNameError && <p className={css.errorText}>{editNameError}</p>}
+				</div>
+				<div className={css.actions}>
+					<Button
+						variant="default"
+						size="icon"
+						onClick={onEditConfirm}
+						disabled={isUpdatePending}
+						data-testid={testIds.editConfirmButton(department.id)}
+						aria-label="Confirm edit"
+					>
+						<Check />
+					</Button>
+					<Button
+						variant="outline"
+						size="icon"
+						onClick={onEditCancel}
+						data-testid={testIds.editCancelButton(department.id)}
+						aria-label="Cancel edit"
+					>
+						<X />
+					</Button>
+				</div>
 				</div>
 			</li>
 		);
 	}
 
 	return (
-		<li className={css.item} data-testid={testIds.item(department.id)}>
-			<span className={css.name}>{department.name}</span>
-			<div className={css.meta}>
-				<span className={css.employeeCount}>
-					<Users size={16} aria-hidden="true" />
-					{department.totalEmployees}
-				</span>
-				<Button
-					variant="ghost"
-					size="icon"
-					onClick={() => onEditStart(department.id)}
-					data-testid={testIds.editButton(department.id)}
-					aria-label={`Edit ${department.name}`}
-				>
-					<Pencil />
-				</Button>
-				<Button
-					variant="ghost"
-					size="icon"
-					onClick={() => onDelete(department.id)}
-					disabled={hasAssignedEmployees || isDeletePending}
-					data-testid={testIds.deleteButton(department.id)}
-					aria-label={`Delete ${department.name}`}
-				>
-					<Trash2 />
-				</Button>
-			</div>
+		<li className={css.item} data-testid={testIds.item(department.id)}>		{department.color && (
+			<span
+				className={css.colorSwatch}
+				style={{ backgroundColor: department.color }}
+				aria-hidden="true"
+			/>
+		)}			<span className={css.name}>{department.name}</span>
+		<div className={css.meta}>
+			<span className={css.employeeCount}>
+				<Users size={16} aria-hidden="true" />
+				{department.totalEmployees}
+			</span>
+			<Button
+				variant="ghost"
+				size="icon"
+				onClick={() => onEditStart(department.id)}
+				data-testid={testIds.editButton(department.id)}
+				aria-label={`Edit ${department.name}`}
+			>
+				<Pencil />
+			</Button>
+			<Button
+				variant="ghost"
+				size="icon"
+				onClick={() => onDelete(department.id)}
+				disabled={hasAssignedEmployees || isDeletePending}
+				data-testid={testIds.deleteButton(department.id)}
+				aria-label={`Delete ${department.name}`}
+			>
+				<Trash2 />
+			</Button>
+		</div>
 		</li>
 	);
 };

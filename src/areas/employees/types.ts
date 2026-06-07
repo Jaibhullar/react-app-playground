@@ -9,6 +9,8 @@ export type Employee = {
 export type Department = {
 	id: number,
 	name: string,
+	/** Hex colour string used to tint the department badge, e.g. '#6366f1' */
+	color?: string,
 };
 
 export type Location = {

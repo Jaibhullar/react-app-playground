@@ -14,11 +14,13 @@ export type GetDepartmentsResponse = {
 
 export type CreateDepartmentRequest = {
 	name: string,
+	color?: string,
 };
 
 export type UpdateDepartmentRequest = {
 	departmentId: number,
 	name: string,
+	color?: string,
 };
 
 export type DeleteDepartmentRequest = {
@@ -67,11 +69,11 @@ export async function executeCreateDepartment(request: CreateDepartmentRequest):
 }
 
 export async function executeUpdateDepartment(request: UpdateDepartmentRequest): Promise<void> {
-	const { name } = request;
+	const { name, color } = request;
 	const response = await fetch(getDepartmentUrl(request.departmentId), {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ name }),
+		body: JSON.stringify({ name, color }),
 	});
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }

@@ -3,6 +3,7 @@ export const headerIcon: string;
 export const title: string;
 export const subtitle: string;
 export const addRow: string;
+export const colorInput: string;
 export const addInputWrapper: string;
 export const addInput: string;
 export const addButton: string;

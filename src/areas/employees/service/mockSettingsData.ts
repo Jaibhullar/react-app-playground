@@ -2,12 +2,12 @@ import type { Department, EmployeeRole, Location } from '../types';
 import { mockEmployees } from './mockEmployeeData';
 
 export const mockDepartments: Department[] = [
-	{ id: 0, name: 'Engineering' },
-	{ id: 1, name: 'Design' },
-	{ id: 2, name: 'Product' },
-	{ id: 3, name: 'HR' },
-	{ id: 4, name: 'Sales' },
-	{ id: 5, name: 'Finance' },
+	{ id: 0, name: 'Engineering', color: '#6366f1' },
+	{ id: 1, name: 'Design', color: '#ec4899' },
+	{ id: 2, name: 'Product', color: '#f59e0b' },
+	{ id: 3, name: 'HR', color: '#10b981' },
+	{ id: 4, name: 'Sales', color: '#3b82f6' },
+	{ id: 5, name: 'Finance', color: '#8b5cf6' },
 ];
 
 export const mockLocations: Location[] = [
@@ -54,16 +54,17 @@ export function countEmployeesInRole(roleId: number): number {
 	return mockEmployees.filter(e => e.role.id === roleId).length;
 }
 
-export function addDepartment(name: string): Department {
-	const department: Department = { id: nextDepartmentId++, name };
+export function addDepartment(name: string, color?: string): Department {
+	const department: Department = { id: nextDepartmentId++, name, color };
 	mockDepartments.push(department);
 	return department;
 }
 
-export function updateDepartment(departmentId: number, name: string): Department | undefined {
+export function updateDepartment(departmentId: number, name: string, color?: string): Department | undefined {
 	const department = mockDepartments.find(d => d.id === departmentId);
 	if (!department) return undefined;
 	department.name = name;
+	department.color = color;
 	return department;
 }
 

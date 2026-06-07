@@ -7,3 +7,5 @@ export const editInputWrapper: string;
 export const editInput: string;
 export const actions: string;
 export const errorText: string;
+export const colorSwatch: string;
+export const colorInput: string;

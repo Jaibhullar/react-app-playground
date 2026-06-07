@@ -13,8 +13,8 @@ export type UseDepartmentActionsInput = {
 };
 
 export type UseDepartmentActionsReturn = {
-	handleCreateDepartment: (name: string) => void,
-	handleUpdateDepartment: (departmentId: number, name: string) => void,
+	handleCreateDepartment: (name: string, color?: string) => void,
+	handleUpdateDepartment: (departmentId: number, name: string, color?: string) => void,
 	handleDeleteDepartment: (departmentId: number) => void,
 	isCreatePending: boolean,
 	isUpdatePending: boolean,
@@ -64,12 +64,12 @@ export function useDepartmentActions({
 		},
 	});
 
-	const handleCreateDepartment = useCallback((name: string) => {
-		createDepartment({ name });
+	const handleCreateDepartment = useCallback((name: string, color?: string) => {
+		createDepartment({ name, color });
 	}, [createDepartment]);
 
-	const handleUpdateDepartment = useCallback((departmentId: number, name: string) => {
-		updateDepartment({ departmentId, name });
+	const handleUpdateDepartment = useCallback((departmentId: number, name: string, color?: string) => {
+		updateDepartment({ departmentId, name, color });
 	}, [updateDepartment]);
 
 	const handleDeleteDepartment = useCallback((departmentId: number) => {
