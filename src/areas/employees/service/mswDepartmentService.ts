@@ -3,23 +3,23 @@ import { http, HttpResponse } from 'msw';
 import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
-import { type DepartmentRouteParams, departmentServiceMeta, type DTO_CreateDepartmentRequest, type DTO_GetDepartmentsResponse, type DTO_UpdateDepartmentRequest } from './departmentService';
+import { type CreateDepartmentRequest, type DepartmentRouteParams, departmentServiceMeta, type GetDepartmentsResponse, type UpdateDepartmentRequest } from './departmentService';
 import { addDepartment, isDepartmentInUse, mockDepartments, removeDepartment, updateDepartment } from './mockSettingsData';
 
 const getDepartmentsFactory = createMockResponseFactory(departmentServiceMeta.routes.getDepartments);
 const departmentFactory = createMockResponseFactory(departmentServiceMeta.routes.department);
 
-const getDepartmentsHandler = getDepartmentsFactory.get.json<DTO_GetDepartmentsResponse>(
+const getDepartmentsHandler = getDepartmentsFactory.get.json<GetDepartmentsResponse>(
 	() => ({ departments: mockDepartments })
 );
 
-const createDepartmentHandler = getDepartmentsFactory.post.json<DTO_CreateDepartmentRequest, void>(
+const createDepartmentHandler = getDepartmentsFactory.post.json<CreateDepartmentRequest, void>(
 	({ content }) => {
 		addDepartment(content.name);
 	}
 );
 
-const updateDepartmentHandler = departmentFactory.put.json<DTO_UpdateDepartmentRequest, void, UrlParams<DepartmentRouteParams>>(
+const updateDepartmentHandler = departmentFactory.put.json<Pick<UpdateDepartmentRequest, 'name'>, void, UrlParams<DepartmentRouteParams>>(
 	({ content, routeParams }) => {
 		updateDepartment(Number(routeParams.departmentId), content.name);
 	}

@@ -3,23 +3,23 @@ import { http, HttpResponse } from 'msw';
 import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
-import { type DTO_CreateLocationRequest, type DTO_GetLocationsResponse, type DTO_UpdateLocationRequest, type LocationRouteParams, locationServiceMeta } from './locationService';
+import { type CreateLocationRequest, type GetLocationsResponse, type LocationRouteParams, locationServiceMeta, type UpdateLocationRequest } from './locationService';
 import { addLocation, isLocationInUse, mockLocations, removeLocation, updateLocation } from './mockSettingsData';
 
 const getLocationsFactory = createMockResponseFactory(locationServiceMeta.routes.getLocations);
 const locationFactory = createMockResponseFactory(locationServiceMeta.routes.location);
 
-const getLocationsHandler = getLocationsFactory.get.json<DTO_GetLocationsResponse>(
+const getLocationsHandler = getLocationsFactory.get.json<GetLocationsResponse>(
 	() => ({ locations: mockLocations })
 );
 
-const createLocationHandler = getLocationsFactory.post.json<DTO_CreateLocationRequest, void>(
+const createLocationHandler = getLocationsFactory.post.json<CreateLocationRequest, void>(
 	({ content }) => {
 		addLocation(content.name);
 	}
 );
 
-const updateLocationHandler = locationFactory.put.json<DTO_UpdateLocationRequest, void, UrlParams<LocationRouteParams>>(
+const updateLocationHandler = locationFactory.put.json<Pick<UpdateLocationRequest, 'name'>, void, UrlParams<LocationRouteParams>>(
 	({ content, routeParams }) => {
 		updateLocation(Number(routeParams.locationId), content.name);
 	}

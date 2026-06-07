@@ -4,22 +4,22 @@ import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
 import { addRole, isRoleInUse, mockRoles, removeRole, updateRole } from './mockSettingsData';
-import { type DTO_CreateRoleRequest, type DTO_GetRolesResponse, type DTO_UpdateRoleRequest, type RoleRouteParams, roleServiceMeta } from './roleService';
+import { type CreateRoleRequest, type GetRolesResponse, type RoleRouteParams, roleServiceMeta, type UpdateRoleRequest } from './roleService';
 
 const getRolesFactory = createMockResponseFactory(roleServiceMeta.routes.getRoles);
 const roleFactory = createMockResponseFactory(roleServiceMeta.routes.role);
 
-const getRolesHandler = getRolesFactory.get.json<DTO_GetRolesResponse>(
+const getRolesHandler = getRolesFactory.get.json<GetRolesResponse>(
 	() => ({ roles: mockRoles })
 );
 
-const createRoleHandler = getRolesFactory.post.json<DTO_CreateRoleRequest, void>(
+const createRoleHandler = getRolesFactory.post.json<CreateRoleRequest, void>(
 	({ content }) => {
 		addRole(content.name);
 	}
 );
 
-const updateRoleHandler = roleFactory.put.json<DTO_UpdateRoleRequest, void, UrlParams<RoleRouteParams>>(
+const updateRoleHandler = roleFactory.put.json<Pick<UpdateRoleRequest, 'name'>, void, UrlParams<RoleRouteParams>>(
 	({ content, routeParams }) => {
 		updateRole(Number(routeParams.roleId), content.name);
 	}

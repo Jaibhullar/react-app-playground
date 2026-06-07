@@ -2,25 +2,6 @@ import { API_BASE_URL } from '@/common/constants';
 
 import type { Location } from '../types';
 
-// --- DTOs ---
-
-export type DTO_Location = {
-	id: number,
-	name: string,
-};
-
-export type DTO_GetLocationsResponse = {
-	locations: DTO_Location[],
-};
-
-export type DTO_CreateLocationRequest = {
-	name: string,
-};
-
-export type DTO_UpdateLocationRequest = {
-	name: string,
-};
-
 // --- Domain Types ---
 
 export type GetLocationsResponse = {
@@ -63,38 +44,30 @@ function getLocationUrl(locationId: number): string {
 	return `${API_BASE_URL}${locationRoute.replace(':locationId', String(locationId))}`;
 }
 
-function transformDTO(dto: DTO_Location): Location {
-	return { id: dto.id, name: dto.name };
-}
-
 // --- Service Functions ---
 
 // Note there is no error handling on GET and we are using base fetch here for demo simplicity.
 export async function executeGetLocations(): Promise<GetLocationsResponse> {
 	return fetch(`${API_BASE_URL}${getLocationsRoute}`)
 		.then(response => response.json())
-		.then(json => {
-			const responseDTO = json as DTO_GetLocationsResponse;
-			return { locations: responseDTO.locations.map(transformDTO) };
-		});
+		.then(json => json as GetLocationsResponse);
 }
 
 export async function executeCreateLocation(request: CreateLocationRequest): Promise<void> {
-	const body: DTO_CreateLocationRequest = { name: request.name };
 	const response = await fetch(`${API_BASE_URL}${getLocationsRoute}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body),
+		body: JSON.stringify(request),
 	});
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }
 
 export async function executeUpdateLocation(request: UpdateLocationRequest): Promise<void> {
-	const body: DTO_UpdateLocationRequest = { name: request.name };
+	const { name } = request;
 	const response = await fetch(getLocationUrl(request.locationId), {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body),
+		body: JSON.stringify({ name }),
 	});
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }

@@ -2,25 +2,6 @@ import { API_BASE_URL } from '@/common/constants';
 
 import type { Department } from '../types';
 
-// --- DTOs ---
-
-export type DTO_Department = {
-	id: number,
-	name: string,
-};
-
-export type DTO_GetDepartmentsResponse = {
-	departments: DTO_Department[],
-};
-
-export type DTO_CreateDepartmentRequest = {
-	name: string,
-};
-
-export type DTO_UpdateDepartmentRequest = {
-	name: string,
-};
-
 // --- Domain Types ---
 
 export type GetDepartmentsResponse = {
@@ -63,38 +44,30 @@ function getDepartmentUrl(departmentId: number): string {
 	return `${API_BASE_URL}${departmentRoute.replace(':departmentId', String(departmentId))}`;
 }
 
-function transformDTO(dto: DTO_Department): Department {
-	return { id: dto.id, name: dto.name };
-}
-
 // --- Service Functions ---
 
 // Note there is no error handling on GET and we are using base fetch here for demo simplicity.
 export async function executeGetDepartments(): Promise<GetDepartmentsResponse> {
 	return fetch(`${API_BASE_URL}${getDepartmentsRoute}`)
 		.then(response => response.json())
-		.then(json => {
-			const responseDTO = json as DTO_GetDepartmentsResponse;
-			return { departments: responseDTO.departments.map(transformDTO) };
-		});
+		.then(json => json as GetDepartmentsResponse);
 }
 
 export async function executeCreateDepartment(request: CreateDepartmentRequest): Promise<void> {
-	const body: DTO_CreateDepartmentRequest = { name: request.name };
 	const response = await fetch(`${API_BASE_URL}${getDepartmentsRoute}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body),
+		body: JSON.stringify(request),
 	});
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }
 
 export async function executeUpdateDepartment(request: UpdateDepartmentRequest): Promise<void> {
-	const body: DTO_UpdateDepartmentRequest = { name: request.name };
+	const { name } = request;
 	const response = await fetch(getDepartmentUrl(request.departmentId), {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body),
+		body: JSON.stringify({ name }),
 	});
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }
