@@ -2,6 +2,22 @@ import { DTO_Employee, DTO_EmployeeDetail } from './employeeService';
 
 let idCounter = 0;
 
+// Internal storage shape. The list endpoint returns the slim DTO_Employee shape;
+// the detail endpoint surfaces email/phone. Storing them here means new employees
+// keep whatever the user submitted instead of being overwritten by a generator.
+type StoredEmployee = DTO_Employee & {
+	email: string,
+	phone: string,
+};
+
+function generateSeedEmail(name: string): string {
+	return `${name.toLowerCase().replace(' ', '.')}@example.com`;
+}
+
+function generateSeedPhone(id: number): string {
+	return `555-01${id.toString().padStart(2, '0')}`;
+}
+
 enum Department {
 	Engineering = 'Engineering',
 	Marketing = 'Marketing',
@@ -45,7 +61,7 @@ function getRoleName(id: number): string {
 	return Object.values(Role)[id] ?? `Role ${id}`;
 }
 
-function createData(name: string, departmentId: number, departmentName: string, locationId: number, locationName: string, roleId: number, roleName: string): DTO_Employee {
+function createData(name: string, departmentId: number, departmentName: string, locationId: number, locationName: string, roleId: number, roleName: string): StoredEmployee {
 	return {
 		id: idCounter,
 		name,
@@ -61,11 +77,13 @@ function createData(name: string, departmentId: number, departmentName: string, 
 			id: roleId,
 			name: roleName,
 		},
+		email: generateSeedEmail(name),
+		phone: generateSeedPhone(idCounter),
 	};
 }
 
-const generateDataSet = (count: number) => {
-	const dataSet: DTO_Employee[] = [];
+const generateDataSet = (count: number): StoredEmployee[] => {
+	const dataSet: StoredEmployee[] = [];
 	for (let i = 1; i <= count; i++) {
 		idCounter++;
 		const departmentId = i % 3;
@@ -95,8 +113,6 @@ export function getEmployeeDetail (employeeId:number):DTO_EmployeeDetail | undef
 
 	return {
 		...employee,
-		email: `${employee.name.toLowerCase().replace(' ', '.')}@example.com`,
-		phone: `555-01${employee.id.toString().padStart(2, '0')}`,
 		hierarchy: {
 			// Find some managers (could be employees with lower IDs, or same dept)
 			managers: mockEmployees.filter(e => e.id < employee.id && e.department.id === employee.department.id).slice(0, 1),
@@ -110,6 +126,8 @@ export function getEmployeeDetail (employeeId:number):DTO_EmployeeDetail | undef
 
 export type EmployeeMutableFields = {
 	name: string,
+	email: string,
+	phone: string,
 	department: {
 		id: number, name: string,
 	},
@@ -123,7 +141,7 @@ export type EmployeeMutableFields = {
 
 export function addEmployee(fields: EmployeeMutableFields): DTO_Employee {
 	idCounter++;
-	const employee: DTO_Employee = { id: idCounter, ...fields };
+	const employee: StoredEmployee = { id: idCounter, ...fields };
 	mockEmployees.push(employee);
 	return employee;
 }
@@ -132,6 +150,8 @@ export function updateEmployee(employeeId: number, fields: EmployeeMutableFields
 	const employee = mockEmployees.find(e => e.id === employeeId);
 	if (!employee) return undefined;
 	employee.name = fields.name;
+	employee.email = fields.email;
+	employee.phone = fields.phone;
 	employee.department = fields.department;
 	employee.location = fields.location;
 	employee.role = fields.role;

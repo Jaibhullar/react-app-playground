@@ -36,23 +36,23 @@ const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<Ro
 
 const createEmployeeHandler = employeesFactory.post.json<CreateEmployeeRequest, void>(
 	({ content }) => {
-		const { name, departmentId, locationId, roleId } = content;
+		const { name, email, phone, departmentId, locationId, roleId } = content;
 		const department = mockDepartments.find(d => d.id === departmentId);
 		const location = mockLocations.find(l => l.id === locationId);
 		const role = mockRoles.find(r => r.id === roleId);
 		if (!department || !location || !role) return;
-		addEmployee({ name, department, location, role });
+		addEmployee({ name, email, phone, department, location, role });
 	}
 );
 
 const updateEmployeeHandler = employeeFactory.put.json<Omit<UpdateEmployeeRequest, 'employeeId'>, void, UrlParams<EmployeeRouteParams>>(
 	({ content, routeParams }) => {
-		const { name, departmentId, locationId, roleId } = content;
+		const { name, email, phone, departmentId, locationId, roleId } = content;
 		const department = mockDepartments.find(d => d.id === departmentId);
 		const location = mockLocations.find(l => l.id === locationId);
 		const role = mockRoles.find(r => r.id === roleId);
 		if (!department || !location || !role) return;
-		updateEmployee(Number(routeParams.employeeId), { name, department, location, role });
+		updateEmployee(Number(routeParams.employeeId), { name, email, phone, department, location, role });
 	}
 );
 

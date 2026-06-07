@@ -43,6 +43,8 @@ export type Hierarchy = {
 
 export type EmployeeFormValues = {
 	name: string,
+	email: string,
+	phone: string,
 	departmentId: number,
 	locationId: number,
 	roleId: number,

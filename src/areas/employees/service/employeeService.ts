@@ -82,6 +82,8 @@ export const EMPLOYEE_DETAIL_QUERY_KEY = (employeeId: number) => ['employeeDetai
 
 export type CreateEmployeeRequest = {
 	name: string,
+	email: string,
+	phone: string,
 	departmentId: number,
 	locationId: number,
 	roleId: number,
@@ -90,6 +92,8 @@ export type CreateEmployeeRequest = {
 export type UpdateEmployeeRequest = {
 	employeeId: number,
 	name: string,
+	email: string,
+	phone: string,
 	departmentId: number,
 	locationId: number,
 	roleId: number,
