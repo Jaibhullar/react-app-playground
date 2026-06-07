@@ -54,6 +54,7 @@ export type GetEmployeesResponse = {
 export type DTO_EmployeeDetail = DTO_Employee & {
 	email: string,
 	phone: string,
+	startDate: string,
 	hierarchy: {
 		managers: DTO_Employee[],
 		subordinates: DTO_Employee[],
@@ -84,6 +85,7 @@ export type CreateEmployeeRequest = {
 	name: string,
 	email: string,
 	phone: string,
+	startDate: string,
 	departmentId: number,
 	locationId: number,
 	roleId: number,
@@ -127,11 +129,12 @@ function transformDTO(dto: DTO_Employee): Employee {
 
 function transformDetailDTO(dto: DTO_EmployeeDetail | undefined): EmployeeDetail | undefined {
 	if (!dto) return undefined;
-	const { email, phone, hierarchy } = dto;
+	const { email, phone, startDate, hierarchy } = dto;
 	const employeeDetail : EmployeeDetail = {
 		...transformDTO(dto),
 		email,
 		phone,
+		startDate,
 		hierarchy: {
 			managers: hierarchy.managers.map(transformDTO),
 			subordinates: hierarchy.subordinates.map(transformDTO),

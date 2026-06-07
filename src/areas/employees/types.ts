@@ -32,6 +32,7 @@ export type EmployeeFilters = {
 export type EmployeeDetail = Employee & {
 	email: string,
 	phone: string,
+	startDate: string,
 	hierarchy: Hierarchy,
 };
 
@@ -45,6 +46,7 @@ export type EmployeeFormValues = {
 	name: string,
 	email: string,
 	phone: string,
+	startDate: string,
 	departmentId: number,
 	locationId: number,
 	roleId: number,

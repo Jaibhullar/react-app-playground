@@ -8,6 +8,7 @@ let idCounter = 0;
 type StoredEmployee = DTO_Employee & {
 	email: string,
 	phone: string,
+	startDate: string,
 };
 
 function generateSeedEmail(name: string): string {
@@ -16,6 +17,13 @@ function generateSeedEmail(name: string): string {
 
 function generateSeedPhone(id: number): string {
 	return `555-01${id.toString().padStart(2, '0')}`;
+}
+
+function generateSeedStartDate(id: number): string {
+	const year = 2015 + (id % 8);
+	const month = (id % 12) + 1;
+	const day = (id % 28) + 1;
+	return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 enum Department {
@@ -79,6 +87,7 @@ function createData(name: string, departmentId: number, departmentName: string, 
 		},
 		email: generateSeedEmail(name),
 		phone: generateSeedPhone(idCounter),
+		startDate: generateSeedStartDate(idCounter),
 	};
 }
 
@@ -128,6 +137,7 @@ export type EmployeeMutableFields = {
 	name: string,
 	email: string,
 	phone: string,
+	startDate: string,
 	department: {
 		id: number, name: string,
 	},

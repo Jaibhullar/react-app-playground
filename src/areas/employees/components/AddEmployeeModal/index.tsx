@@ -16,6 +16,7 @@ type AddEmployeeFormValues = {
 	lastName: string,
 	email: string,
 	phone: string,
+	startDate: string,
 	roleId: string,
 	departmentId: string,
 	locationId: string,
@@ -26,10 +27,13 @@ const INITIAL_FORM_VALUES: AddEmployeeFormValues = {
 	lastName: '',
 	email: '',
 	phone: '',
+	startDate: '',
 	roleId: '',
 	departmentId: '',
 	locationId: '',
 };
+
+const TODAY = new Date().toISOString().split('T')[0] as string;
 
 function isAddEmployeeFormValid(values: AddEmployeeFormValues): boolean {
 	return (
@@ -37,6 +41,7 @@ function isAddEmployeeFormValid(values: AddEmployeeFormValues): boolean {
 		values.lastName.trim() !== '' &&
 		values.email.trim() !== '' &&
 		values.phone.trim() !== '' &&
+		values.startDate !== '' &&
 		values.roleId !== '' &&
 		values.departmentId !== '' &&
 		values.locationId !== ''
@@ -54,6 +59,7 @@ const testIds = {
 	lastNameInput: 'add-employee-last-name',
 	emailInput: 'add-employee-email',
 	phoneInput: 'add-employee-phone',
+	startDateInput: 'add-employee-start-date',
 	roleSelect: 'add-employee-role-select',
 	departmentSelect: 'add-employee-department-select',
 	locationSelect: 'add-employee-location-select',
@@ -64,14 +70,16 @@ const testIds = {
 type TextFieldProps = {
 	id: string,
 	label: string,
-	type: 'text' | 'email' | 'tel',
-	placeholder: string,
+	type: 'text' | 'email' | 'tel' | 'date',
+	placeholder?: string,
 	value: string,
 	onChange: React.ChangeEventHandler<HTMLInputElement>,
 	testId: string,
+	min?: string,
+	max?: string,
 };
 
-const TextField = ({ id, label, type, placeholder, value, onChange, testId }: TextFieldProps) => (
+const TextField = ({ id, label, type, placeholder, value, onChange, testId, min, max }: TextFieldProps) => (
 	<div className={css.field}>
 		<label className={css.label} htmlFor={id}>{label}</label>
 		<input
@@ -82,6 +90,8 @@ const TextField = ({ id, label, type, placeholder, value, onChange, testId }: Te
 			placeholder={placeholder}
 			value={value}
 			onChange={onChange}
+			min={min}
+			max={max}
 		/>
 	</div>
 );
@@ -142,6 +152,10 @@ export const AddEmployeeModal = ({ isOpen, onClose, onEmployeeCreated }: AddEmpl
 		setFormValues((prev) => ({ ...prev, phone: e.target.value }));
 	}, []);
 
+	const handleStartDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormValues((prev) => ({ ...prev, startDate: e.target.value }));
+	}, []);
+
 	const handleRoleChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
 		setFormValues((prev) => ({ ...prev, roleId: e.target.value }));
 	}, []);
@@ -165,6 +179,7 @@ export const AddEmployeeModal = ({ isOpen, onClose, onEmployeeCreated }: AddEmpl
 			name: `${formValues.firstName.trim()} ${formValues.lastName.trim()}`,
 			email: formValues.email.trim(),
 			phone: formValues.phone.trim(),
+			startDate: formValues.startDate,
 			departmentId: Number(formValues.departmentId),
 			locationId: Number(formValues.locationId),
 			roleId: Number(formValues.roleId),
@@ -238,6 +253,16 @@ export const AddEmployeeModal = ({ isOpen, onClose, onEmployeeCreated }: AddEmpl
 					value={formValues.phone}
 					onChange={handlePhoneChange}
 					testId={testIds.phoneInput}
+				/>
+
+				<TextField
+					id="startDate"
+					label="Start Date"
+					type="date"
+					value={formValues.startDate}
+					onChange={handleStartDateChange}
+					testId={testIds.startDateInput}
+					max={TODAY}
 				/>
 
 				<div className={css.field}>
