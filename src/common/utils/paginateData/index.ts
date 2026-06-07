@@ -7,3 +7,6 @@ export const paginateData = <T>(
 	const endIndex = currentPage * itemsPerPage;
 	return data.slice(startIndex, endIndex);
 };
+
+export type { PageItem } from './buildPageRange';
+export { buildPageRange } from './buildPageRange';

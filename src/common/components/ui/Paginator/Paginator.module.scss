@@ -1,0 +1,83 @@
+// IMPORTANT - When editing make sure you are running the 'watch-scss' script to ensure that the module class type definitions are kept in sync with this file.
+
+.nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.75rem 0 0.75rem;
+}
+
+.list {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    list-style: none;
+    margin: 0;
+    padding: 0 0.25rem;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.375rem;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--foreground);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    outline: none;
+    user-select: none;
+
+    &:disabled {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+
+    &:focus-visible {
+        border-color: var(--ring);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 50%, transparent);
+    }
+
+    &:hover:not(:disabled) {
+        background-color: var(--muted);
+        border-color: var(--border);
+    }
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+        pointer-events: none;
+        flex-shrink: 0;
+    }
+}
+
+.button-active {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+    pointer-events: none;
+
+    &:hover {
+        background-color: color-mix(in srgb, var(--primary) 85%, transparent);
+    }
+}
+
+.ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: 0.05em;
+}

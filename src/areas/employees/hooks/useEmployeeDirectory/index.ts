@@ -3,14 +3,19 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useDepartments } from '@/areas/settings/hooks/useDepartments';
 import { useLocations } from '@/areas/settings/hooks/useLocations';
+import { paginateData } from '@/common/utils/paginateData';
 
 import { EMPLOYEES_QUERY_KEY, executeGetEmployees } from '../../service/employeeService';
 import type { Employee } from '../../types';
 
 const ALL_VALUE = 'all' as const;
+const EMPLOYEES_PER_PAGE = 9;
 
 export type UseEmployeeDirectoryReturn = {
 	employees: Employee[],
+	totalEmployees: number,
+	currentPage: number,
+	totalPages: number,
 	isLoading: boolean,
 	isError: boolean,
 	searchQuery: string,
@@ -19,6 +24,7 @@ export type UseEmployeeDirectoryReturn = {
 	handleSearchChange: (query: string) => void,
 	handleDepartmentChange: (departmentId: string) => void,
 	handleLocationChange: (locationId: string) => void,
+	handlePageChange: (page: number) => void,
 	departmentOptions: Array<{
 		value: string,
 		label: string,
@@ -33,6 +39,7 @@ export function useEmployeeDirectory(): UseEmployeeDirectoryReturn {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>(ALL_VALUE);
 	const [selectedLocationId, setSelectedLocationId] = useState<string>(ALL_VALUE);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	const filters = useMemo(
 		() => ({
@@ -50,7 +57,7 @@ export function useEmployeeDirectory(): UseEmployeeDirectoryReturn {
 	const { departments } = useDepartments();
 	const { locations } = useLocations();
 
-	const employees = useMemo(() => {
+	const filteredEmployees = useMemo(() => {
 		if (!data?.employees) return [];
 		if (!searchQuery.trim()) return data.employees;
 		const lowerQuery = searchQuery.toLowerCase();
@@ -60,6 +67,13 @@ export function useEmployeeDirectory(): UseEmployeeDirectoryReturn {
 				e.role.name.toLowerCase().includes(lowerQuery)
 		);
 	}, [data?.employees, searchQuery]);
+
+	const totalPages = Math.max(1, Math.ceil(filteredEmployees.length / EMPLOYEES_PER_PAGE));
+
+	const employees = useMemo(
+		() => paginateData(filteredEmployees, currentPage, EMPLOYEES_PER_PAGE),
+		[filteredEmployees, currentPage]
+	);
 
 	const departmentOptions = useMemo(
 		() => [
@@ -79,18 +93,28 @@ export function useEmployeeDirectory(): UseEmployeeDirectoryReturn {
 
 	const handleSearchChange = useCallback((query: string) => {
 		setSearchQuery(query);
+		setCurrentPage(1);
 	}, []);
 
 	const handleDepartmentChange = useCallback((departmentId: string) => {
 		setSelectedDepartmentId(departmentId);
+		setCurrentPage(1);
 	}, []);
 
 	const handleLocationChange = useCallback((locationId: string) => {
 		setSelectedLocationId(locationId);
+		setCurrentPage(1);
+	}, []);
+
+	const handlePageChange = useCallback((page: number) => {
+		setCurrentPage(page);
 	}, []);
 
 	return {
 		employees,
+		totalEmployees: filteredEmployees.length,
+		currentPage,
+		totalPages,
 		isLoading,
 		isError,
 		searchQuery,
@@ -99,6 +123,7 @@ export function useEmployeeDirectory(): UseEmployeeDirectoryReturn {
 		handleSearchChange,
 		handleDepartmentChange,
 		handleLocationChange,
+		handlePageChange,
 		departmentOptions,
 		locationOptions,
 	};

@@ -3,6 +3,7 @@ import { MapPin, Search, UserPlus } from 'lucide-react';
 
 import { Badge } from '@/common/components/ui/Badge';
 import { Button } from '@/common/components/ui/Button';
+import { Paginator } from '@/common/components/ui/Paginator';
 import { Select } from '@/common/components/ui/Select';
 
 import { AddEmployeeModal } from './components/AddEmployeeModal';
@@ -50,6 +51,7 @@ const testIds = {
 	searchInput: 'employee-search-input',
 	departmentSelect: 'employee-department-select',
 	locationSelect: 'employee-location-select',
+	paginator: Paginator.testIds.nav,
 };
 
 type AddEmployeeModalState = {
@@ -64,6 +66,8 @@ export const EmployeeDirectory = () => {
 
 	const {
 		employees,
+		currentPage,
+		totalPages,
 		isLoading,
 		isError,
 		searchQuery,
@@ -72,6 +76,7 @@ export const EmployeeDirectory = () => {
 		handleSearchChange,
 		handleDepartmentChange,
 		handleLocationChange,
+		handlePageChange,
 		departmentOptions,
 		locationOptions,
 	} = useEmployeeDirectory();
@@ -133,6 +138,13 @@ export const EmployeeDirectory = () => {
 				</div>
 
 				{gridContent}
+				{!isLoading && !isError && (
+					<Paginator
+						currentPage={currentPage}
+						totalPages={totalPages}
+						onPageChange={handlePageChange}
+					/>
+				)}
 			</div>
 
 			<AddEmployeeModal
