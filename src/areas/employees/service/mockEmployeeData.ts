@@ -1,4 +1,5 @@
 import { DTO_Employee, DTO_EmployeeDetail } from './employeeService';
+import { SEED_DEPARTMENTS, SEED_LOCATIONS, SEED_ROLES } from './mockAttributeData';
 
 let idCounter = 0;
 
@@ -26,24 +27,6 @@ function generateSeedStartDate(id: number): string {
 	return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-enum Department {
-	Engineering = 'Engineering',
-	Marketing = 'Marketing',
-	HumanResources = 'Human Resources',
-}
-
-enum Location {
-	SanFrancisco = 'San Francisco',
-	NewYork = 'New York',
-}
-
-enum Role {
-	SoftwareEngineer = 'Software Engineer',
-	ProductManager = 'Product Manager',
-	Designer = 'Designer',
-	DataAnalyst = 'Data Analyst',
-}
-
 const employeeNames = [
 	'Alex Smith', 'Jordan Johnson', 'Taylor Williams', 'Morgan Brown', 'Casey Jones',
 	'Riley Garcia', 'Quinn Miller', 'Avery Davis', 'Cameron Martinez', 'Dakota Wilson',
@@ -57,35 +40,17 @@ function getRealisticName(index: number): string {
 	return employeeNames[index % employeeNames.length];
 }
 
-function getDepartmentName(id: number): string {
-	return Object.values(Department)[id] ?? `Department ${id}`;
-}
-
-function getLocationName(id: number): string {
-	return Object.values(Location)[id] ?? `Location ${id}`;
-}
-
-function getRoleName(id: number): string {
-	return Object.values(Role)[id] ?? `Role ${id}`;
-}
-
-function createData(name: string, departmentId: number, departmentName: string, locationId: number, locationName: string, roleId: number, roleName: string): StoredEmployee {
+function createData(departmentIdx: number, locationIdx: number, roleIdx: number): StoredEmployee {
+	const department = SEED_DEPARTMENTS[departmentIdx % SEED_DEPARTMENTS.length]!;
+	const location = SEED_LOCATIONS[locationIdx % SEED_LOCATIONS.length]!;
+	const role = SEED_ROLES[roleIdx % SEED_ROLES.length]!;
 	return {
 		id: idCounter,
-		name,
-		department: {
-			id: departmentId,
-			name: departmentName,
-		},
-		location: {
-			id: locationId,
-			name: locationName,
-		},
-		role: {
-			id: roleId,
-			name: roleName,
-		},
-		email: generateSeedEmail(name),
+		name: getRealisticName(idCounter),
+		department,
+		location,
+		role,
+		email: generateSeedEmail(getRealisticName(idCounter)),
 		phone: generateSeedPhone(idCounter),
 		startDate: generateSeedStartDate(idCounter),
 	};
@@ -95,20 +60,11 @@ const generateDataSet = (count: number): StoredEmployee[] => {
 	const dataSet: StoredEmployee[] = [];
 	for (let i = 1; i <= count; i++) {
 		idCounter++;
-		const departmentId = i % 3;
-		const locationId = i % 2;
-		const roleId = i % 4;
-		dataSet.push(
-			createData(
-				getRealisticName(i),
-				departmentId,
-				getDepartmentName(departmentId),
-				locationId,
-				getLocationName(locationId),
-				roleId,
-				getRoleName(roleId)
-			)
-		);
+		dataSet.push(createData(
+			i % SEED_DEPARTMENTS.length,
+			i % SEED_LOCATIONS.length,
+			i % SEED_ROLES.length
+		));
 	}
 	return dataSet;
 };
@@ -139,7 +95,7 @@ export type EmployeeMutableFields = {
 	phone: string,
 	startDate: string,
 	department: {
-		id: number, name: string,
+		id: number, name: string, color: string,
 	},
 	location: {
 		id: number, name: string,

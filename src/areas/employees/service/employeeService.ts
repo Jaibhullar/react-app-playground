@@ -8,6 +8,7 @@ export type DTO_Employee = {
 	department: {
 		id: number,
 		name: string,
+		color: string,
 	},
 	location: {
 		id: number,

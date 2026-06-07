@@ -6,6 +6,8 @@ import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 import { type CreateDepartmentRequest, type DepartmentRouteParams, departmentServiceMeta, type GetDepartmentsResponse, type UpdateDepartmentRequest } from './departmentService';
 import { addDepartment, countEmployeesInDepartment, isDepartmentInUse, mockDepartments, removeDepartment, updateDepartment } from './mockSettingsData';
 
+const DEFAULT_DEPARTMENT_COLOR = '#6366f1' as const;
+
 const getDepartmentsFactory = createMockResponseFactory(departmentServiceMeta.routes.getDepartments);
 const departmentFactory = createMockResponseFactory(departmentServiceMeta.routes.department);
 
@@ -20,13 +22,13 @@ const getDepartmentsHandler = getDepartmentsFactory.get.json<GetDepartmentsRespo
 
 const createDepartmentHandler = getDepartmentsFactory.post.json<CreateDepartmentRequest, void>(
 	({ content }) => {
-		addDepartment(content.name, content.color);
+		addDepartment(content.name, content.color ?? DEFAULT_DEPARTMENT_COLOR);
 	}
 );
 
 const updateDepartmentHandler = departmentFactory.put.json<Pick<UpdateDepartmentRequest, 'name' | 'color'>, void, UrlParams<DepartmentRouteParams>>(
 	({ content, routeParams }) => {
-		updateDepartment(Number(routeParams.departmentId), content.name, content.color);
+		updateDepartment(Number(routeParams.departmentId), content.name, content.color ?? DEFAULT_DEPARTMENT_COLOR);
 	}
 );
 
