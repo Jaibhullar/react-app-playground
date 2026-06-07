@@ -44,7 +44,7 @@ export function useEmployeeDirectory(): UseEmployeeDirectoryReturn {
 
 	const { data, isLoading, isError } = useQuery({
 		queryKey: [...EMPLOYEES_QUERY_KEY, filters],
-		queryFn: () => executeGetEmployees({ filters }),
+		queryFn: () => executeGetEmployees({ filters, pagination: { pageSize: 1000 } }),
 	});
 
 	const { departments } = useDepartments();
