@@ -23,6 +23,7 @@ export type UpdateLocationRequest = {
 
 export type DeleteLocationRequest = {
 	locationId: number,
+	reassignToId?: number,
 };
 
 export type LocationRouteParams = {
@@ -77,7 +78,9 @@ export async function executeUpdateLocation(request: UpdateLocationRequest): Pro
 }
 
 export async function executeDeleteLocation(request: DeleteLocationRequest): Promise<void> {
-	const response = await fetch(getLocationUrl(request.locationId), { method: 'DELETE' });
+	const baseUrl = getLocationUrl(request.locationId);
+	const url = request.reassignToId !== undefined ? `${baseUrl}?reassignToId=${request.reassignToId}` : baseUrl;
+	const response = await fetch(url, { method: 'DELETE' });
 	if (response.status === 409) throw new Error(LOCATION_IN_USE_ERROR);
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }

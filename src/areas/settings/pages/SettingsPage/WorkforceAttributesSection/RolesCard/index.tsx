@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Briefcase, Plus } from 'lucide-react';
 
 import { useRoleActions } from '@/areas/employees/hooks/useRoleActions';
@@ -6,6 +6,7 @@ import type { RoleWithCount } from '@/areas/employees/service/roleService';
 import { useRoles } from '@/areas/settings/hooks/useRoles';
 import { Button } from '@/common/components/ui/Button';
 
+import { ReassignAndDeleteModal } from '../ReassignAndDeleteModal';
 import { RoleListItem } from './RoleListItem';
 
 import css from './RolesCard.module.scss';
@@ -16,6 +17,12 @@ type EditingState = {
 	roleId: number,
 	editValue: string,
 	nameError: string | null,
+} | null;
+
+type ReassignDeleteState = {
+	id: number,
+	name: string,
+	totalEmployees: number,
 } | null;
 
 function isDuplicateName(name: string, roles: RoleWithCount[], excludeId?: number): boolean {
@@ -35,10 +42,12 @@ export const RolesCard = () => {
 	const [newRoleName, setNewRoleName] = useState('');
 	const [newRoleNameError, setNewRoleNameError] = useState<string | null>(null);
 	const [editingState, setEditingState] = useState<EditingState>(null);
+	const [reassignDeleteState, setReassignDeleteState] = useState<ReassignDeleteState>(null);
 
 	const { handleCreateRole, handleUpdateRole, handleDeleteRole, isCreatePending, isUpdatePending, isDeletePending } = useRoleActions({
 		onCreateSuccess: () => setNewRoleName(''),
 		onUpdateSuccess: () => setEditingState(null),
+		onDeleteSuccess: () => setReassignDeleteState(null),
 	});
 
 	const handleAdd = useCallback(() => {
@@ -89,71 +98,100 @@ export const RolesCard = () => {
 		handleDeleteRole(roleId);
 	}, [handleDeleteRole]);
 
+	const handleReassignAndDeleteRequest = useCallback((roleId: number) => {
+		const role = roles.find((r: RoleWithCount) => r.id === roleId);
+		if (!role) return;
+		setReassignDeleteState({ id: role.id, name: role.name, totalEmployees: role.totalEmployees });
+	}, [roles]);
+
+	const handleReassignAndDeleteConfirm = useCallback((newRoleId: number) => {
+		if (!reassignDeleteState) return;
+		handleDeleteRole(reassignDeleteState.id, newRoleId);
+	}, [reassignDeleteState, handleDeleteRole]);
+
+	const replacementRoleOptions = useMemo(
+		() => roles
+			.filter((r: RoleWithCount) => r.id !== reassignDeleteState?.id)
+			.map((r: RoleWithCount) => ({ value: String(r.id), label: r.name })),
+		[roles, reassignDeleteState?.id]
+	);
+
 	return (
-		<div data-testid={testIds.card}>
-			<div className={css.header}>
-				<div className={css.headerIcon}>
-					<Briefcase size={20} aria-hidden="true" />
+		<>
+			<div data-testid={testIds.card}>
+				<div className={css.header}>
+					<div className={css.headerIcon}>
+						<Briefcase size={20} aria-hidden="true" />
+					</div>
+					<div>
+						<h3 className={css.title}>Roles</h3>
+						<p className={css.subtitle}>Job roles and positions</p>
+					</div>
 				</div>
-				<div>
-					<h3 className={css.title}>Roles</h3>
-					<p className={css.subtitle}>Job roles and positions</p>
+
+				<div className={css.addRow}>
+					<div className={css.addInputWrapper}>
+						<input
+							className={css.addInput}
+							placeholder="New role name"
+							value={newRoleName}
+							onChange={(e) => handleNewNameChange(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter') handleAdd();
+							}}
+							data-testid={testIds.addInput}
+							aria-label="New role name"
+						/>
+						{newRoleNameError && <p className={css.errorText}>{newRoleNameError}</p>}
+					</div>
+					<Button
+						onClick={handleAdd}
+						disabled={!newRoleName.trim() || isCreatePending}
+						data-testid={testIds.addButton}
+						className={css.addButton}
+					>
+						<Plus />
+						Add
+					</Button>
 				</div>
+
+				{isLoading && <p className={css.stateMessage}>Loading roles…</p>}
+				{isError && <p className={css.stateMessage}>Failed to load roles.</p>}
+
+				{!isLoading && !isError && (
+					<ul className={css.list} role="list">
+						{roles.map((role: RoleWithCount) => {
+							const activeEdit = editingState?.roleId === role.id ? editingState : null;
+							return (
+								<RoleListItem
+									key={role.id}
+									role={role}
+									isEditing={activeEdit !== null}
+									editValue={activeEdit?.editValue ?? ''}
+									editNameError={activeEdit?.nameError ?? undefined}
+									onEditValueChange={handleEditValueChange}
+									onEditStart={handleEditStart}
+									onEditConfirm={handleEditConfirm}
+									onEditCancel={handleEditCancel}
+									onDelete={handleDelete} onReassignAndDelete={handleReassignAndDeleteRequest} isUpdatePending={isUpdatePending}
+									isDeletePending={isDeletePending}
+								/>
+							);
+						})}
+					</ul>
+				)}
 			</div>
 
-			<div className={css.addRow}>
-				<div className={css.addInputWrapper}>
-					<input
-						className={css.addInput}
-						placeholder="New role name"
-						value={newRoleName}
-						onChange={(e) => handleNewNameChange(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter') handleAdd();
-						}}
-						data-testid={testIds.addInput}
-						aria-label="New role name"
-					/>
-					{newRoleNameError && <p className={css.errorText}>{newRoleNameError}</p>}
-				</div>
-				<Button
-					onClick={handleAdd}
-					disabled={!newRoleName.trim() || isCreatePending}
-					data-testid={testIds.addButton}
-					className={css.addButton}
-				>
-					<Plus />
-					Add
-				</Button>
-			</div>
-
-			{isLoading && <p className={css.stateMessage}>Loading roles…</p>}
-			{isError && <p className={css.stateMessage}>Failed to load roles.</p>}
-
-			{!isLoading && !isError && (
-				<ul className={css.list} role="list">
-					{roles.map((role: RoleWithCount) => {
-						const activeEdit = editingState?.roleId === role.id ? editingState : null;
-						return (
-							<RoleListItem
-								key={role.id}
-								role={role}
-								isEditing={activeEdit !== null}
-								editValue={activeEdit?.editValue ?? ''}
-								editNameError={activeEdit?.nameError ?? undefined}
-								onEditValueChange={handleEditValueChange}
-								onEditStart={handleEditStart}
-								onEditConfirm={handleEditConfirm}
-								onEditCancel={handleEditCancel}
-								onDelete={handleDelete}
-								isUpdatePending={isUpdatePending}
-								isDeletePending={isDeletePending}
-							/>
-						);
-					})}
-				</ul>
-			)}
-		</div>
+			<ReassignAndDeleteModal
+				isOpen={reassignDeleteState !== null}
+				onClose={() => setReassignDeleteState(null)}
+				attributeLabel={reassignDeleteState?.name ?? ''}
+				totalAssignedEmployees={reassignDeleteState?.totalEmployees ?? 0}
+				replacementOptions={replacementRoleOptions}
+				onConfirm={handleReassignAndDeleteConfirm}
+				isPending={isDeletePending}
+			/>
+		</>
 	);
 };
 

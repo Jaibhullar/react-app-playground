@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { DEPARTMENT_IN_USE_ERROR, DEPARTMENTS_QUERY_KEY, executeCreateDepartment, executeDeleteDepartment, executeUpdateDepartment } from '../../service/departmentService';
+import { EMPLOYEES_QUERY_KEY } from '../../service/employeeService';
 
 export type UseDepartmentActionsInput = {
 	onCreateSuccess?: () => void,
@@ -15,7 +16,7 @@ export type UseDepartmentActionsInput = {
 export type UseDepartmentActionsReturn = {
 	handleCreateDepartment: (name: string, color?: string) => void,
 	handleUpdateDepartment: (departmentId: number, name: string, color?: string) => void,
-	handleDeleteDepartment: (departmentId: number) => void,
+	handleDeleteDepartment: (departmentId: number, reassignToId?: number) => void,
 	isCreatePending: boolean,
 	isUpdatePending: boolean,
 	isDeletePending: boolean,
@@ -52,6 +53,7 @@ export function useDepartmentActions({
 		mutationFn: executeDeleteDepartment,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: DEPARTMENTS_QUERY_KEY });
+			queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
 			onDeleteSuccess?.();
 		},
 		onError: (error: Error) => {
@@ -72,8 +74,8 @@ export function useDepartmentActions({
 		updateDepartment({ departmentId, name, color });
 	}, [updateDepartment]);
 
-	const handleDeleteDepartment = useCallback((departmentId: number) => {
-		deleteDepartment({ departmentId });
+	const handleDeleteDepartment = useCallback((departmentId: number, reassignToId?: number) => {
+		deleteDepartment({ departmentId, reassignToId });
 	}, [deleteDepartment]);
 
 	return {

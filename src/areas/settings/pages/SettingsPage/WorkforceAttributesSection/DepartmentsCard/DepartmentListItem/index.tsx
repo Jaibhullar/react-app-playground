@@ -26,6 +26,7 @@ export type DepartmentListItemProps = {
 	onEditConfirm: () => void,
 	onEditCancel: () => void,
 	onDelete: (departmentId: number) => void,
+	onReassignAndDelete: (departmentId: number) => void,
 	isUpdatePending: boolean,
 	isDeletePending: boolean,
 };
@@ -42,6 +43,7 @@ export const DepartmentListItem = ({
 	onEditConfirm,
 	onEditCancel,
 	onDelete,
+	onReassignAndDelete,
 	isUpdatePending,
 	isDeletePending,
 }: DepartmentListItemProps) => {
@@ -123,10 +125,10 @@ export const DepartmentListItem = ({
 			<Button
 				variant="ghost"
 				size="icon"
-				onClick={() => onDelete(department.id)}
-				disabled={hasAssignedEmployees || isDeletePending}
+				onClick={() => hasAssignedEmployees ? onReassignAndDelete(department.id) : onDelete(department.id)}
+				disabled={isDeletePending}
 				data-testid={testIds.deleteButton(department.id)}
-				aria-label={`Delete ${department.name}`}
+				aria-label={hasAssignedEmployees ? `Reassign employees and delete ${department.name}` : `Delete ${department.name}`}
 			>
 				<Trash2 />
 			</Button>

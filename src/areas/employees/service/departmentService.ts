@@ -25,6 +25,7 @@ export type UpdateDepartmentRequest = {
 
 export type DeleteDepartmentRequest = {
 	departmentId: number,
+	reassignToId?: number,
 };
 
 export type DepartmentRouteParams = {
@@ -79,7 +80,9 @@ export async function executeUpdateDepartment(request: UpdateDepartmentRequest):
 }
 
 export async function executeDeleteDepartment(request: DeleteDepartmentRequest): Promise<void> {
-	const response = await fetch(getDepartmentUrl(request.departmentId), { method: 'DELETE' });
+	const baseUrl = getDepartmentUrl(request.departmentId);
+	const url = request.reassignToId !== undefined ? `${baseUrl}?reassignToId=${request.reassignToId}` : baseUrl;
+	const response = await fetch(url, { method: 'DELETE' });
 	if (response.status === 409) throw new Error(DEPARTMENT_IN_USE_ERROR);
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }

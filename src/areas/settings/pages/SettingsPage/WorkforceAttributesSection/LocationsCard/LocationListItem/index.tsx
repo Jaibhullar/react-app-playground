@@ -24,6 +24,7 @@ export type LocationListItemProps = {
 	onEditConfirm: () => void,
 	onEditCancel: () => void,
 	onDelete: (locationId: number) => void,
+	onReassignAndDelete: (locationId: number) => void,
 	isUpdatePending: boolean,
 	isDeletePending: boolean,
 };
@@ -38,6 +39,7 @@ export const LocationListItem = ({
 	onEditConfirm,
 	onEditCancel,
 	onDelete,
+	onReassignAndDelete,
 	isUpdatePending,
 	isDeletePending,
 }: LocationListItemProps) => {
@@ -110,10 +112,10 @@ export const LocationListItem = ({
 				<Button
 					variant="ghost"
 					size="icon"
-					onClick={() => onDelete(location.id)}
-					disabled={hasAssignedEmployees || isDeletePending}
+					onClick={() => hasAssignedEmployees ? onReassignAndDelete(location.id) : onDelete(location.id)}
+					disabled={isDeletePending}
 					data-testid={testIds.deleteButton(location.id)}
-					aria-label={`Delete ${location.name}`}
+					aria-label={hasAssignedEmployees ? `Reassign employees and delete ${location.name}` : `Delete ${location.name}`}
 				>
 					<Trash2 />
 				</Button>

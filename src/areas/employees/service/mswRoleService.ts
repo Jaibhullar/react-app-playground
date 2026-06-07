@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
-import { addRole, countEmployeesInRole, isRoleInUse, mockRoles, removeRole, updateRole } from './mockSettingsData';
+import { addRole, countEmployeesInRole, isRoleInUse, mockRoles, reassignEmployeesFromRole, removeRole, updateRole } from './mockSettingsData';
 import { type CreateRoleRequest, type GetRolesResponse, type RoleRouteParams, roleServiceMeta, type UpdateRoleRequest } from './roleService';
 
 const getRolesFactory = createMockResponseFactory(roleServiceMeta.routes.getRoles);
@@ -32,9 +32,13 @@ const updateRoleHandler = roleFactory.put.json<Pick<UpdateRoleRequest, 'name'>, 
 
 const deleteRoleHandler = http.delete<UrlParams<RoleRouteParams>>(
 	mockApiUrl(roleServiceMeta.routes.role),
-	({ params }) => {
+	({ params, request }) => {
 		const roleId = Number(params.roleId);
-		if (isRoleInUse(roleId)) {
+		const reassignToId = new URL(request.url).searchParams.get('reassignToId');
+		if (reassignToId) {
+			reassignEmployeesFromRole(roleId, Number(reassignToId));
+		}
+		else if (isRoleInUse(roleId)) {
 			return new HttpResponse(null, { status: 409, statusText: 'Conflict - role has assigned employees' });
 		}
 		removeRole(roleId);

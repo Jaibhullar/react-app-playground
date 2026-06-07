@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { EMPLOYEES_QUERY_KEY } from '../../service/employeeService';
 import { executeCreateRole, executeDeleteRole, executeUpdateRole, ROLE_IN_USE_ERROR, ROLES_QUERY_KEY } from '../../service/roleService';
 
 export type UseRoleActionsInput = {
@@ -15,7 +16,7 @@ export type UseRoleActionsInput = {
 export type UseRoleActionsReturn = {
 	handleCreateRole: (name: string) => void,
 	handleUpdateRole: (roleId: number, name: string) => void,
-	handleDeleteRole: (roleId: number) => void,
+	handleDeleteRole: (roleId: number, reassignToId?: number) => void,
 	isCreatePending: boolean,
 	isUpdatePending: boolean,
 	isDeletePending: boolean,
@@ -52,6 +53,7 @@ export function useRoleActions({
 		mutationFn: executeDeleteRole,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ROLES_QUERY_KEY });
+			queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
 			onDeleteSuccess?.();
 		},
 		onError: (error: Error) => {
@@ -72,8 +74,8 @@ export function useRoleActions({
 		updateRole({ roleId, name });
 	}, [updateRole]);
 
-	const handleDeleteRole = useCallback((roleId: number) => {
-		deleteRole({ roleId });
+	const handleDeleteRole = useCallback((roleId: number, reassignToId?: number) => {
+		deleteRole({ roleId, reassignToId });
 	}, [deleteRole]);
 
 	return {

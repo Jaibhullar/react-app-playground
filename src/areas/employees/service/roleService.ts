@@ -23,6 +23,7 @@ export type UpdateRoleRequest = {
 
 export type DeleteRoleRequest = {
 	roleId: number,
+	reassignToId?: number,
 };
 
 export type RoleRouteParams = {
@@ -77,7 +78,9 @@ export async function executeUpdateRole(request: UpdateRoleRequest): Promise<voi
 }
 
 export async function executeDeleteRole(request: DeleteRoleRequest): Promise<void> {
-	const response = await fetch(getRoleUrl(request.roleId), { method: 'DELETE' });
+	const baseUrl = getRoleUrl(request.roleId);
+	const url = request.reassignToId !== undefined ? `${baseUrl}?reassignToId=${request.reassignToId}` : baseUrl;
+	const response = await fetch(url, { method: 'DELETE' });
 	if (response.status === 409) throw new Error(ROLE_IN_USE_ERROR);
 	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
 }

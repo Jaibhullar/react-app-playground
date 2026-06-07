@@ -4,7 +4,7 @@ import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
 import { type CreateLocationRequest, type GetLocationsResponse, type LocationRouteParams, locationServiceMeta, type UpdateLocationRequest } from './locationService';
-import { addLocation, countEmployeesInLocation, isLocationInUse, mockLocations, removeLocation, updateLocation } from './mockSettingsData';
+import { addLocation, countEmployeesInLocation, isLocationInUse, mockLocations, reassignEmployeesFromLocation, removeLocation, updateLocation } from './mockSettingsData';
 
 const getLocationsFactory = createMockResponseFactory(locationServiceMeta.routes.getLocations);
 const locationFactory = createMockResponseFactory(locationServiceMeta.routes.location);
@@ -32,9 +32,13 @@ const updateLocationHandler = locationFactory.put.json<Pick<UpdateLocationReques
 
 const deleteLocationHandler = http.delete<UrlParams<LocationRouteParams>>(
 	mockApiUrl(locationServiceMeta.routes.location),
-	({ params }) => {
+	({ params, request }) => {
 		const locationId = Number(params.locationId);
-		if (isLocationInUse(locationId)) {
+		const reassignToId = new URL(request.url).searchParams.get('reassignToId');
+		if (reassignToId) {
+			reassignEmployeesFromLocation(locationId, Number(reassignToId));
+		}
+		else if (isLocationInUse(locationId)) {
 			return new HttpResponse(null, { status: 409, statusText: 'Conflict - location has assigned employees' });
 		}
 		removeLocation(locationId);

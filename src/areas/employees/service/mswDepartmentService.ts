@@ -4,7 +4,7 @@ import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
 import { type CreateDepartmentRequest, type DepartmentRouteParams, departmentServiceMeta, type GetDepartmentsResponse, type UpdateDepartmentRequest } from './departmentService';
-import { addDepartment, countEmployeesInDepartment, isDepartmentInUse, mockDepartments, removeDepartment, updateDepartment } from './mockSettingsData';
+import { addDepartment, countEmployeesInDepartment, isDepartmentInUse, mockDepartments, reassignEmployeesFromDepartment, removeDepartment, updateDepartment } from './mockSettingsData';
 
 const DEFAULT_DEPARTMENT_COLOR = '#6366f1' as const;
 
@@ -34,9 +34,13 @@ const updateDepartmentHandler = departmentFactory.put.json<Pick<UpdateDepartment
 
 const deleteDepartmentHandler = http.delete<UrlParams<DepartmentRouteParams>>(
 	mockApiUrl(departmentServiceMeta.routes.department),
-	({ params }) => {
+	({ params, request }) => {
 		const departmentId = Number(params.departmentId);
-		if (isDepartmentInUse(departmentId)) {
+		const reassignToId = new URL(request.url).searchParams.get('reassignToId');
+		if (reassignToId) {
+			reassignEmployeesFromDepartment(departmentId, Number(reassignToId));
+		}
+		else if (isDepartmentInUse(departmentId)) {
 			return new HttpResponse(null, { status: 409, statusText: 'Conflict - department has assigned employees' });
 		}
 		removeDepartment(departmentId);

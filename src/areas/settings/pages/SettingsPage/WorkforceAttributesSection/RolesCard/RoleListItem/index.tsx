@@ -24,6 +24,7 @@ export type RoleListItemProps = {
 	onEditConfirm: () => void,
 	onEditCancel: () => void,
 	onDelete: (roleId: number) => void,
+	onReassignAndDelete: (roleId: number) => void,
 	isUpdatePending: boolean,
 	isDeletePending: boolean,
 };
@@ -38,6 +39,7 @@ export const RoleListItem = ({
 	onEditConfirm,
 	onEditCancel,
 	onDelete,
+	onReassignAndDelete,
 	isUpdatePending,
 	isDeletePending,
 }: RoleListItemProps) => {
@@ -110,10 +112,10 @@ export const RoleListItem = ({
 				<Button
 					variant="ghost"
 					size="icon"
-					onClick={() => onDelete(role.id)}
-					disabled={hasAssignedEmployees || isDeletePending}
+					onClick={() => hasAssignedEmployees ? onReassignAndDelete(role.id) : onDelete(role.id)}
+					disabled={isDeletePending}
 					data-testid={testIds.deleteButton(role.id)}
-					aria-label={`Delete ${role.name}`}
+					aria-label={hasAssignedEmployees ? `Reassign employees and delete ${role.name}` : `Delete ${role.name}`}
 				>
 					<Trash2 />
 				</Button>

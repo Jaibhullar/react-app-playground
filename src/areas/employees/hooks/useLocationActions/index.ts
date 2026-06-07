@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { EMPLOYEES_QUERY_KEY } from '../../service/employeeService';
 import { executeCreateLocation, executeDeleteLocation, executeUpdateLocation, LOCATION_IN_USE_ERROR, LOCATIONS_QUERY_KEY } from '../../service/locationService';
 
 export type UseLocationActionsInput = {
@@ -15,7 +16,7 @@ export type UseLocationActionsInput = {
 export type UseLocationActionsReturn = {
 	handleCreateLocation: (name: string) => void,
 	handleUpdateLocation: (locationId: number, name: string) => void,
-	handleDeleteLocation: (locationId: number) => void,
+	handleDeleteLocation: (locationId: number, reassignToId?: number) => void,
 	isCreatePending: boolean,
 	isUpdatePending: boolean,
 	isDeletePending: boolean,
@@ -52,6 +53,7 @@ export function useLocationActions({
 		mutationFn: executeDeleteLocation,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: LOCATIONS_QUERY_KEY });
+			queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
 			onDeleteSuccess?.();
 		},
 		onError: (error: Error) => {
@@ -72,8 +74,8 @@ export function useLocationActions({
 		updateLocation({ locationId, name });
 	}, [updateLocation]);
 
-	const handleDeleteLocation = useCallback((locationId: number) => {
-		deleteLocation({ locationId });
+	const handleDeleteLocation = useCallback((locationId: number, reassignToId?: number) => {
+		deleteLocation({ locationId, reassignToId });
 	}, [deleteLocation]);
 
 	return {

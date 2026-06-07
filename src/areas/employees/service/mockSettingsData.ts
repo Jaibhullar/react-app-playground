@@ -89,3 +89,27 @@ export function removeRole(roleId: number): void {
 	const index = mockRoles.findIndex(r => r.id === roleId);
 	if (index !== -1) mockRoles.splice(index, 1);
 }
+
+export function reassignEmployeesFromDepartment(fromDepartmentId: number, toDepartmentId: number): void {
+	const newDepartment = mockDepartments.find(d => d.id === toDepartmentId);
+	if (!newDepartment) return;
+	mockEmployees.forEach(e => {
+		if (e.department.id === fromDepartmentId) e.department = newDepartment;
+	});
+}
+
+export function reassignEmployeesFromLocation(fromLocationId: number, toLocationId: number): void {
+	const newLocation = mockLocations.find(l => l.id === toLocationId);
+	if (!newLocation) return;
+	mockEmployees.forEach(e => {
+		if (e.location.id === fromLocationId) e.location = newLocation;
+	});
+}
+
+export function reassignEmployeesFromRole(fromRoleId: number, toRoleId: number): void {
+	const newRole = mockRoles.find(r => r.id === toRoleId);
+	if (!newRole) return;
+	mockEmployees.forEach(e => {
+		if (e.role.id === fromRoleId) e.role = newRole;
+	});
+}
