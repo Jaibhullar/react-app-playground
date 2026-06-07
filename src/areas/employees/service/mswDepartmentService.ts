@@ -4,13 +4,18 @@ import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
 import { type CreateDepartmentRequest, type DepartmentRouteParams, departmentServiceMeta, type GetDepartmentsResponse, type UpdateDepartmentRequest } from './departmentService';
-import { addDepartment, isDepartmentInUse, mockDepartments, removeDepartment, updateDepartment } from './mockSettingsData';
+import { addDepartment, countEmployeesInDepartment, isDepartmentInUse, mockDepartments, removeDepartment, updateDepartment } from './mockSettingsData';
 
 const getDepartmentsFactory = createMockResponseFactory(departmentServiceMeta.routes.getDepartments);
 const departmentFactory = createMockResponseFactory(departmentServiceMeta.routes.department);
 
 const getDepartmentsHandler = getDepartmentsFactory.get.json<GetDepartmentsResponse>(
-	() => ({ departments: mockDepartments })
+	() => ({
+		departments: mockDepartments.map(d => ({
+			...d,
+			totalEmployees: countEmployeesInDepartment(d.id),
+		})),
+	})
 );
 
 const createDepartmentHandler = getDepartmentsFactory.post.json<CreateDepartmentRequest, void>(

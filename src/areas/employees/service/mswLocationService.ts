@@ -4,13 +4,18 @@ import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
 import { type CreateLocationRequest, type GetLocationsResponse, type LocationRouteParams, locationServiceMeta, type UpdateLocationRequest } from './locationService';
-import { addLocation, isLocationInUse, mockLocations, removeLocation, updateLocation } from './mockSettingsData';
+import { addLocation, countEmployeesInLocation, isLocationInUse, mockLocations, removeLocation, updateLocation } from './mockSettingsData';
 
 const getLocationsFactory = createMockResponseFactory(locationServiceMeta.routes.getLocations);
 const locationFactory = createMockResponseFactory(locationServiceMeta.routes.location);
 
 const getLocationsHandler = getLocationsFactory.get.json<GetLocationsResponse>(
-	() => ({ locations: mockLocations })
+	() => ({
+		locations: mockLocations.map(l => ({
+			...l,
+			totalEmployees: countEmployeesInLocation(l.id),
+		})),
+	})
 );
 
 const createLocationHandler = getLocationsFactory.post.json<CreateLocationRequest, void>(

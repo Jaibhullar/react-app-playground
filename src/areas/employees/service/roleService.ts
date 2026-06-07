@@ -4,8 +4,12 @@ import type { EmployeeRole } from '../types';
 
 // --- Domain Types ---
 
+export type RoleWithCount = EmployeeRole & {
+	totalEmployees: number,
+};
+
 export type GetRolesResponse = {
-	roles: EmployeeRole[],
+	roles: RoleWithCount[],
 };
 
 export type CreateRoleRequest = {

@@ -3,14 +3,19 @@ import { http, HttpResponse } from 'msw';
 import { UrlParams } from '@/msw/core_msw';
 import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
-import { addRole, isRoleInUse, mockRoles, removeRole, updateRole } from './mockSettingsData';
+import { addRole, countEmployeesInRole, isRoleInUse, mockRoles, removeRole, updateRole } from './mockSettingsData';
 import { type CreateRoleRequest, type GetRolesResponse, type RoleRouteParams, roleServiceMeta, type UpdateRoleRequest } from './roleService';
 
 const getRolesFactory = createMockResponseFactory(roleServiceMeta.routes.getRoles);
 const roleFactory = createMockResponseFactory(roleServiceMeta.routes.role);
 
 const getRolesHandler = getRolesFactory.get.json<GetRolesResponse>(
-	() => ({ roles: mockRoles })
+	() => ({
+		roles: mockRoles.map(r => ({
+			...r,
+			totalEmployees: countEmployeesInRole(r.id),
+		})),
+	})
 );
 
 const createRoleHandler = getRolesFactory.post.json<CreateRoleRequest, void>(

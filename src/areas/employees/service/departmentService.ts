@@ -4,8 +4,12 @@ import type { Department } from '../types';
 
 // --- Domain Types ---
 
+export type DepartmentWithCount = Department & {
+	totalEmployees: number,
+};
+
 export type GetDepartmentsResponse = {
-	departments: Department[],
+	departments: DepartmentWithCount[],
 };
 
 export type CreateDepartmentRequest = {

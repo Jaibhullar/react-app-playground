@@ -3,13 +3,18 @@ import { mockEmployees } from './mockEmployeeData';
 
 export const mockDepartments: Department[] = [
 	{ id: 0, name: 'Engineering' },
-	{ id: 1, name: 'Marketing' },
-	{ id: 2, name: 'Human Resources' },
+	{ id: 1, name: 'Design' },
+	{ id: 2, name: 'Product' },
+	{ id: 3, name: 'HR' },
+	{ id: 4, name: 'Sales' },
+	{ id: 5, name: 'Finance' },
 ];
 
 export const mockLocations: Location[] = [
 	{ id: 0, name: 'San Francisco' },
 	{ id: 1, name: 'New York' },
+	{ id: 2, name: 'London' },
+	{ id: 3, name: 'Austin' },
 ];
 
 export const mockRoles: EmployeeRole[] = [
@@ -17,6 +22,8 @@ export const mockRoles: EmployeeRole[] = [
 	{ id: 1, name: 'Product Manager' },
 	{ id: 2, name: 'Designer' },
 	{ id: 3, name: 'Data Analyst' },
+	{ id: 4, name: 'Marketing Specialist' },
+	{ id: 5, name: 'HR Manager' },
 ];
 
 let nextDepartmentId = mockDepartments.length;
@@ -27,12 +34,24 @@ export function isDepartmentInUse(departmentId: number): boolean {
 	return mockEmployees.some(e => e.department.id === departmentId);
 }
 
+export function countEmployeesInDepartment(departmentId: number): number {
+	return mockEmployees.filter(e => e.department.id === departmentId).length;
+}
+
 export function isLocationInUse(locationId: number): boolean {
 	return mockEmployees.some(e => e.location.id === locationId);
 }
 
+export function countEmployeesInLocation(locationId: number): number {
+	return mockEmployees.filter(e => e.location.id === locationId).length;
+}
+
 export function isRoleInUse(roleId: number): boolean {
 	return mockEmployees.some(e => e.role.id === roleId);
+}
+
+export function countEmployeesInRole(roleId: number): number {
+	return mockEmployees.filter(e => e.role.id === roleId).length;
 }
 
 export function addDepartment(name: string): Department {

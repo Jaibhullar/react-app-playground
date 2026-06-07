@@ -4,8 +4,12 @@ import type { Location } from '../types';
 
 // --- Domain Types ---
 
+export type LocationWithCount = Location & {
+	totalEmployees: number,
+};
+
 export type GetLocationsResponse = {
-	locations: Location[],
+	locations: LocationWithCount[],
 };
 
 export type CreateLocationRequest = {
