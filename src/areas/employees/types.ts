@@ -85,3 +85,20 @@ export type DeleteEmployeeRequest = {
 export type DeleteEmployeeResponse = {
 	success: boolean,
 };
+
+export type EmployeeFormValues = {
+	name: string,
+	departmentId: number,
+	locationId: number,
+	roleId: number,
+};
+
+export type EmployeeFormDrawerState =
+	| {
+		mode: 'create',
+	}
+	| {
+		mode: 'edit',
+		employee: Employee,
+	}
+	| null;

@@ -11,6 +11,7 @@ export const Layout = () => {
 
 				{/* NavLink - adds 'active' class when current */}
 				<NavLink to="/employees">Employees</NavLink>
+				<NavLink to="/settings">Settings</NavLink>
 			</nav>
 
 			{/* Outlet renders the child route */}
