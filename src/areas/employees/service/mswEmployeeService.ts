@@ -1,13 +1,18 @@
 
 
+import { http, HttpResponse } from 'msw';
+
 import { paginateData } from '@/common/utils/paginateData';
 import { UrlParams } from '@/msw/core_msw';
-import { createMockResponseFactory } from '@/msw/mswUtils';
+import { createMockResponseFactory, mockApiUrl } from '@/msw/mswUtils';
 
-import { type DTO_GetEmployeesResponse, employeeServiceMeta, type GetEmployeesFilters, type GetEmployeesPagination } from './employeeService';
-import { mockEmployees } from './mockEmployeeData';
+import { type CreateEmployeeRequest, type DTO_GetEmployeesResponse, type EmployeeRouteParams, employeeServiceMeta, type GetEmployeesFilters, type GetEmployeesPagination, type UpdateEmployeeRequest } from './employeeService';
+import { addEmployee, mockEmployees, removeEmployee, updateEmployee } from './mockEmployeeData';
+import { mockDepartments, mockLocations, mockRoles } from './mockSettingsData';
 
 const getItemsFactory = createMockResponseFactory(employeeServiceMeta.routes.getItems);
+const employeesFactory = createMockResponseFactory(employeeServiceMeta.routes.createEmployee);
+const employeeFactory = createMockResponseFactory(employeeServiceMeta.routes.employee);
 
 export type RouteParams = GetEmployeesFilters & GetEmployeesPagination;
 
@@ -29,7 +34,37 @@ const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<Ro
 		};
 	});
 
+const createEmployeeHandler = employeesFactory.post.json<CreateEmployeeRequest, void>(
+	({ content }) => {
+		const { name, departmentId, locationId, roleId } = content;
+		const department = mockDepartments.find(d => d.id === departmentId);
+		const location = mockLocations.find(l => l.id === locationId);
+		const role = mockRoles.find(r => r.id === roleId);
+		if (!department || !location || !role) return;
+		addEmployee({ name, department, location, role });
+	}
+);
+
+const updateEmployeeHandler = employeeFactory.put.json<Omit<UpdateEmployeeRequest, 'employeeId'>, void, UrlParams<EmployeeRouteParams>>(
+	({ content, routeParams }) => {
+		const { name, departmentId, locationId, roleId } = content;
+		const department = mockDepartments.find(d => d.id === departmentId);
+		const location = mockLocations.find(l => l.id === locationId);
+		const role = mockRoles.find(r => r.id === roleId);
+		if (!department || !location || !role) return;
+		updateEmployee(Number(routeParams.employeeId), { name, department, location, role });
+	}
+);
+
+const deleteEmployeeHandler = http.delete<UrlParams<EmployeeRouteParams>>(
+	mockApiUrl(employeeServiceMeta.routes.employee),
+	({ params }) => {
+		removeEmployee(Number(params.employeeId));
+		return new HttpResponse(null, { status: 200 });
+	}
+);
+
 // IMPORTANT - Services must be added to the /src/msw/mswBrowser.ts file to have them included in the browser mock service worker setup.
-export const mswEmployeeService = [getItems];
+export const mswEmployeeService = [getItems, createEmployeeHandler, updateEmployeeHandler, deleteEmployeeHandler];
 // To quickly simulate a specific status response, you can use the built in factory statusResponse options, for example:
 // [getItemsFactory.get.statusResponses.status500];

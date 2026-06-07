@@ -38,3 +38,10 @@ export type Hierarchy = {
 	subordinates: Employee[],
 	directPeers: Employee[],
 };
+
+export type EmployeeFormValues = {
+	name: string,
+	departmentId: number,
+	locationId: number,
+	roleId: number,
+};

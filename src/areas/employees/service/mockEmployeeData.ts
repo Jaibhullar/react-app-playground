@@ -107,3 +107,38 @@ export function getEmployeeDetail (employeeId:number):DTO_EmployeeDetail | undef
 		},
 	};
 }
+
+export type EmployeeMutableFields = {
+	name: string,
+	department: {
+		id: number, name: string,
+	},
+	location: {
+		id: number, name: string,
+	},
+	role: {
+		id: number, name: string,
+	},
+};
+
+export function addEmployee(fields: EmployeeMutableFields): DTO_Employee {
+	idCounter++;
+	const employee: DTO_Employee = { id: idCounter, ...fields };
+	mockEmployees.push(employee);
+	return employee;
+}
+
+export function updateEmployee(employeeId: number, fields: EmployeeMutableFields): DTO_Employee | undefined {
+	const employee = mockEmployees.find(e => e.id === employeeId);
+	if (!employee) return undefined;
+	employee.name = fields.name;
+	employee.department = fields.department;
+	employee.location = fields.location;
+	employee.role = fields.role;
+	return employee;
+}
+
+export function removeEmployee(employeeId: number): void {
+	const index = mockEmployees.findIndex(e => e.id === employeeId);
+	if (index !== -1) mockEmployees.splice(index, 1);
+}

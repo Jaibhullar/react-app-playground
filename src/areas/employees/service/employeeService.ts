@@ -73,9 +73,41 @@ export type GetEmployeeDetailResponse = {
 	employee: EmployeeDetail | undefined,
 };
 
+// --- Query Keys ---
+
+export const EMPLOYEES_QUERY_KEY = ['employees'] as const;
+export const EMPLOYEE_DETAIL_QUERY_KEY = (employeeId: number) => ['employeeDetail', employeeId] as const;
+
+// --- Employee Mutation Types ---
+
+export type CreateEmployeeRequest = {
+	name: string,
+	departmentId: number,
+	locationId: number,
+	roleId: number,
+};
+
+export type UpdateEmployeeRequest = {
+	employeeId: number,
+	name: string,
+	departmentId: number,
+	locationId: number,
+	roleId: number,
+};
+
+export type DeleteEmployeeRequest = {
+	employeeId: number,
+};
+
+export type EmployeeRouteParams = {
+	employeeId: number,
+};
+
 const getEmployeesRoute = '/employees:department=:departmentId&location=:locationId&role=:roleId&currentPage=:currentPage&pageSize=:pageSize' as const;
 
 const getEmployeeDetailRoute = '/employee/:employeeId' as const;
+const createEmployeeRoute = '/employees' as const;
+const employeeRoute = '/employees/:employeeId' as const;
 
 function transformDTO(dto: DTO_Employee): Employee {
 	const { id, name, department, location, role } = dto;
@@ -134,6 +166,10 @@ function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {
 	return `${API_BASE_URL}${getEmployeeDetailRoute.replace(':employeeId', String(request.employeeId))}`;
 }
 
+function getEmployeeUrl(employeeId: number): string {
+	return `${API_BASE_URL}${employeeRoute.replace(':employeeId', String(employeeId))}`;
+}
+
 export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest) {
 	const url = getEmployeeDetailQueryUrl(request);
 
@@ -147,6 +183,30 @@ export async function executeGetEmployeeDetail(request: GetEmployeeDetailRequest
 
 }
 
-export const employeeServiceMeta = { routes: { getItems: getEmployeesRoute } };
+export async function executeCreateEmployee(request: CreateEmployeeRequest): Promise<void> {
+	const response = await fetch(`${API_BASE_URL}${createEmployeeRoute}`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(request),
+	});
+	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
+}
+
+export async function executeUpdateEmployee(request: UpdateEmployeeRequest): Promise<void> {
+	const { employeeId, ...body } = request;
+	const response = await fetch(getEmployeeUrl(employeeId), {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body),
+	});
+	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
+}
+
+export async function executeDeleteEmployee(request: DeleteEmployeeRequest): Promise<void> {
+	const response = await fetch(getEmployeeUrl(request.employeeId), { method: 'DELETE' });
+	if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
+}
+
+export const employeeServiceMeta = { routes: { getItems: getEmployeesRoute, createEmployee: createEmployeeRoute, employee: employeeRoute } };
 
 export const employeeDetailServiceMeta = { routes: { getItemDetail: getEmployeeDetailRoute } };
