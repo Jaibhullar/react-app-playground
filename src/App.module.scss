@@ -1,0 +1,14 @@
+// IMPORTANT - When editing make sure you are running the 'watch-scss' script to ensure that the module class type definitions are kept in sync with this file.
+
+.app {
+    min-height: 100vh;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--background);
+}
