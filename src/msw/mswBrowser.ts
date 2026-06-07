@@ -2,8 +2,11 @@ import { HttpHandler } from 'msw';
 import { setupWorker } from 'msw/browser';
 
 import { mswDemoItemService } from '@/areas/demo/service/mswDemoItemService';
+import { mswDepartmentService } from '@/areas/employees/service/mswDepartmentService';
 import { mswEmployeeDetailService } from '@/areas/employees/service/mswEmployeeDetailService';
 import { mswEmployeeService } from '@/areas/employees/service/mswEmployeeService';
+import { mswLocationService } from '@/areas/employees/service/mswLocationService';
+import { mswRoleService } from '@/areas/employees/service/mswRoleService';
 
 import { outputHandlersToConsole } from './core_msw';
 
@@ -13,6 +16,9 @@ function getActiveHandlers() {
 		mswDemoItemService,
 		mswEmployeeService,
 		mswEmployeeDetailService,
+		mswDepartmentService,
+		mswLocationService,
+		mswRoleService,
 	];
 	return handlers;
 }
