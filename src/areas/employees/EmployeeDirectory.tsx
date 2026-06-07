@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { MapPin, Search, UserPlus } from 'lucide-react';
 
 import { Badge } from '@/common/components/ui/Badge';
 import { Button } from '@/common/components/ui/Button';
 import { Select } from '@/common/components/ui/Select';
 
+import { AddEmployeeModal } from './components/AddEmployeeModal';
 import { useEmployeeDirectory } from './hooks/useEmployeeDirectory';
 import type { Department, Employee } from './types';
 
@@ -76,7 +78,14 @@ const testIds = {
 	locationSelect: 'employee-location-select',
 };
 
+type AddEmployeeModalState = {
+	mode: 'add',
+} | null;
+
 export const EmployeeDirectory = () => {
+	const [addEmployeeModalState, setAddEmployeeModalState] = useState<AddEmployeeModalState>(null);
+	const isAddEmployeeModalOpen = !!addEmployeeModalState;
+
 	const {
 		employees,
 		isLoading,
@@ -105,46 +114,57 @@ export const EmployeeDirectory = () => {
 	})();
 
 	return (
-		<div className={css.page} data-testid={testIds.page}>
-			<header className={css.header}>
-				<h1 className={css.title}>Employee Directory</h1>
-				<Button data-testid={testIds.addEmployeeButton}>
-					<UserPlus />
-					Add Employee
-				</Button>
-			</header>
+		<>
+			<div className={css.page} data-testid={testIds.page}>
+				<header className={css.header}>
+					<h1 className={css.title}>Employee Directory</h1>
+					<Button
+						data-testid={testIds.addEmployeeButton}
+						onClick={() => setAddEmployeeModalState({ mode: 'add' })}
+					>
+						<UserPlus />
+						Add Employee
+					</Button>
+				</header>
 
-			<div className={css.filters}>
-				<div className={css.searchWrapper}>
-					<Search className={css.searchIcon} aria-hidden="true" />
-					<input
-						data-testid={testIds.searchInput}
-						className={css.searchInput}
-						type="search"
-						placeholder="Search by name or role…"
-						value={searchQuery}
-						onChange={(e) => handleSearchChange(e.target.value)}
-					/>
+				<div className={css.filters}>
+					<div className={css.searchWrapper}>
+						<Search className={css.searchIcon} aria-hidden="true" />
+						<input
+							data-testid={testIds.searchInput}
+							className={css.searchInput}
+							type="search"
+							placeholder="Search by name or role…"
+							value={searchQuery}
+							onChange={(e) => handleSearchChange(e.target.value)}
+						/>
+					</div>
+
+					<div className={css.selectsRow}>
+						<Select
+							data-testid={testIds.departmentSelect}
+							options={departmentOptions}
+							value={selectedDepartmentId}
+							onChange={(e) => handleDepartmentChange(e.target.value)}
+						/>
+						<Select
+							data-testid={testIds.locationSelect}
+							options={locationOptions}
+							value={selectedLocationId}
+							onChange={(e) => handleLocationChange(e.target.value)}
+						/>
+					</div>
 				</div>
 
-				<div className={css.selectsRow}>
-					<Select
-						data-testid={testIds.departmentSelect}
-						options={departmentOptions}
-						value={selectedDepartmentId}
-						onChange={(e) => handleDepartmentChange(e.target.value)}
-					/>
-					<Select
-						data-testid={testIds.locationSelect}
-						options={locationOptions}
-						value={selectedLocationId}
-						onChange={(e) => handleLocationChange(e.target.value)}
-					/>
-				</div>
+				{gridContent}
 			</div>
 
-			{gridContent}
-		</div>
+			<AddEmployeeModal
+				isOpen={isAddEmployeeModalOpen}
+				onClose={() => setAddEmployeeModalState(null)}
+				onEmployeeCreated={() => setAddEmployeeModalState(null)}
+			/>
+		</>
 	);
 };
 
