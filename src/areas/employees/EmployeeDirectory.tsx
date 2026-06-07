@@ -92,7 +92,7 @@ export const EmployeeDirectory = () => {
 	} = useEmployeeDirectory();
 
 	const gridContent = (() => {
-		if (isLoading) return <p className={css.statusMessage}>Loading employees\u2026</p>;
+		if (isLoading) return <p className={css.statusMessage}>Loading employees…</p>;
 		if (isError) return <p className={css.statusMessage}>Failed to load employees.</p>;
 		if (employees.length === 0) return <p className={css.statusMessage}>No employees found.</p>;
 		return (
@@ -121,7 +121,7 @@ export const EmployeeDirectory = () => {
 						data-testid={testIds.searchInput}
 						className={css.searchInput}
 						type="search"
-						placeholder="Search by name or role\u2026"
+						placeholder="Search by name or role…"
 						value={searchQuery}
 						onChange={(e) => handleSearchChange(e.target.value)}
 					/>
