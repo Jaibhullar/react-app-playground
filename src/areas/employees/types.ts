@@ -22,15 +22,9 @@ export type EmployeeRole = {
 };
 
 export type EmployeeFilters = {
-	search: string,
-	departmentIds: number[] | 'all',
-	locationIds: number[] | 'all',
-	roleIds: number[] | 'all',
-};
-
-export type EmployeePagination = {
-	currentPage?: number,
-	pageSize?: number,
+	departmentId?: number,
+	locationId?: number,
+	roleId?: number,
 };
 
 export type EmployeeDetail = Employee & {
@@ -44,61 +38,3 @@ export type Hierarchy = {
 	subordinates: Employee[],
 	directPeers: Employee[],
 };
-
-export type GetEmployeesRequest = {
-	filters?: EmployeeFilters,
-	pagination?: EmployeePagination,
-};
-
-export type GetEmployeesResponse = {
-	employees: Employee[],
-	totalItems: number,
-	currentPage: number,
-	pageSize: number,
-	totalPages: number,
-};
-
-export type GetEmployeeDetailRequest = {
-	employeeId: number,
-};
-
-export type GetEmployeeDetailResponse = {
-	employee: EmployeeDetail | undefined,
-};
-
-export type GetEmployeeFiltersResponse = {
-	departments: {
-		id: number, name: string,
-	}[],
-	locations: {
-		id: number, name: string,
-	}[],
-	roles: {
-		id: number, name: string,
-	}[],
-};
-
-export type DeleteEmployeeRequest = {
-	employeeId: number,
-};
-
-export type DeleteEmployeeResponse = {
-	success: boolean,
-};
-
-export type EmployeeFormValues = {
-	name: string,
-	departmentId: number,
-	locationId: number,
-	roleId: number,
-};
-
-export type EmployeeFormDrawerState =
-	| {
-		mode: 'create',
-	}
-	| {
-		mode: 'edit',
-		employee: Employee,
-	}
-	| null;
