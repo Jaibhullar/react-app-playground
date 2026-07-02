@@ -162,7 +162,7 @@ function getEmployeesQueryUrl(request: GetEmployeesRequest): string {
 	const departmentId = request?.filters?.departmentId ?? 'all';
 	const locationId = request?.filters?.locationId ?? 'all';
 	const roleId = request?.filters?.roleId ?? 'all';
-	const search = request?.filters?.search ?? '';
+	const search = request?.filters?.search || 'all';
 	const currentPage = request?.pagination?.currentPage ?? 1;
 	const pageSize = request?.pagination?.pageSize ?? 20;
 	return `${API_BASE_URL}${getEmployeesRoute
