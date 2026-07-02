@@ -1,0 +1,20 @@
+// IMPORTANT - When editing make sure you are running the 'watch-scss' script to ensure that the module class type definitions are kept in sync with this file.
+
+.description {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    margin: 0 0 1.25rem;
+    line-height: 1.5;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+}

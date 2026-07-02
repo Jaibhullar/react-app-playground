@@ -1,0 +1,54 @@
+// IMPORTANT - When editing make sure you are running the 'watch-scss' script to ensure that the module class type definitions are kept in sync with this file.
+
+.page {
+    padding: 2rem 1.5rem;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.layout {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+}
+
+.aside {
+    display: none;
+
+    @media (width >=992px) {
+        display: block;
+        width: 200px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 1.5rem;
+    }
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.card {
+    background-color: var(--card);
+    color: var(--card-foreground);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 8%), 0 2px 8px 0 rgb(0 0 0 / 5%);
+}
