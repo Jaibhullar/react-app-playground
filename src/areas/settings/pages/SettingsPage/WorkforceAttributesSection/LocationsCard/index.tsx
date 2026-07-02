@@ -32,6 +32,8 @@ export const LocationsCard = () => {
 		onCreateSuccess: card.onAddSuccess,
 		onUpdateSuccess: card.onUpdateSuccess,
 		onDeleteSuccess: card.onDeleteSuccess,
+		onDeleteConflict: card.handleDeleteConflict,
+		onError: card.handleMutationError,
 	});
 
 	const handleAdd = useCallback(() => {
@@ -88,6 +90,7 @@ export const LocationsCard = () => {
 					</Button>
 				</div>
 
+				{card.mutationError && <p className={css.errorText}>{card.mutationError}</p>}
 				{isLoading && <p className={css.stateMessage}>Loading locations…</p>}
 				{isError && <p className={css.stateMessage}>Failed to load locations.</p>}
 
@@ -99,7 +102,7 @@ export const LocationsCard = () => {
 								<AttributeListItem
 									key={location.id}
 									item={location}
-									leadingSlot={<MapPin size={16} className={css.locationIcon} aria-hidden="true" />}
+									leadingSlot={<MapPin size={16} aria-hidden="true" />}
 									isEditing={activeEdit !== null}
 									editValue={activeEdit?.editValue ?? ''}
 									editNameError={activeEdit?.nameError ?? undefined}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { MapPin, Search, UserPlus } from 'lucide-react';
 
 import { Badge } from '@/common/components/ui/Badge';
@@ -20,11 +20,23 @@ type EmployeeCardProps = {
 	onViewProfile: (employeeId: number) => void,
 };
 
+const testIds = {
+	page: 'employee-directory',
+	addEmployeeButton: 'add-employee-button',
+	searchInput: 'employee-search-input',
+	departmentSelect: 'employee-department-select',
+	locationSelect: 'employee-location-select',
+	paginator: Paginator.testIds.nav,
+	employeeCard: (id: number) => `employee-card-${id}`,
+	viewProfileButton: (id: number) => `employee-card-view-profile-${id}`,
+};
+
 const EmployeeCard = ({ employee, onViewProfile }: EmployeeCardProps) => {
 	const badgeStyle = getDepartmentBadgeStyle(employee.department);
+	const handleViewProfileClick = () => onViewProfile(employee.id);
 
 	return (
-		<div className={css.card}>
+		<div className={css.card} data-testid={testIds.employeeCard(employee.id)}>
 			<div className={css.avatar} aria-hidden="true">
 				{getInitials(employee.name)}
 			</div>
@@ -38,21 +50,17 @@ const EmployeeCard = ({ employee, onViewProfile }: EmployeeCardProps) => {
 				{employee.location.name}
 			</p>
 			<div className={css.cardFooter}>
-				<Button variant="outline" className={css.viewProfileButton} onClick={() => onViewProfile(employee.id)}>
+				<Button
+					variant="outline"
+					className={css.viewProfileButton}
+					data-testid={testIds.viewProfileButton(employee.id)}
+					onClick={handleViewProfileClick}
+				>
 					View Profile
 				</Button>
 			</div>
 		</div>
 	);
-};
-
-const testIds = {
-	page: 'employee-directory',
-	addEmployeeButton: 'add-employee-button',
-	searchInput: 'employee-search-input',
-	departmentSelect: 'employee-department-select',
-	locationSelect: 'employee-location-select',
-	paginator: Paginator.testIds.nav,
 };
 
 type AddEmployeeModalState = {
@@ -89,6 +97,37 @@ export const EmployeeDirectory = () => {
 		locationId: selectedLocationId,
 	});
 
+	const handleOpenAddModal = useCallback(() => {
+		setAddEmployeeModalState({ mode: 'add' });
+	}, []);
+
+	const handleAddModalClose = useCallback(() => {
+		setAddEmployeeModalState(null);
+	}, []);
+
+	const handleEmployeeCreated = useCallback(() => {
+		setAddEmployeeModalState(null);
+	}, []);
+
+	const handleViewProfileClose = useCallback(() => {
+		setViewProfileEmployeeId(null);
+	}, []);
+
+	const handleSearchInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange(e.target.value),
+		[handleSearchChange]
+	);
+
+	const handleDepartmentSelectChange = useCallback(
+		(e: React.ChangeEvent<HTMLSelectElement>) => handleDepartmentChange(e.target.value),
+		[handleDepartmentChange]
+	);
+
+	const handleLocationSelectChange = useCallback(
+		(e: React.ChangeEvent<HTMLSelectElement>) => handleLocationChange(e.target.value),
+		[handleLocationChange]
+	);
+
 	const gridContent = (() => {
 		if (isLoading) return <p className={css.statusMessage}>Loading employees…</p>;
 		if (isError) return <p className={css.statusMessage}>Failed to load employees.</p>;
@@ -109,7 +148,7 @@ export const EmployeeDirectory = () => {
 					<h1 className={css.title}>Employee Directory</h1>
 					<Button
 						data-testid={testIds.addEmployeeButton}
-						onClick={() => setAddEmployeeModalState({ mode: 'add' })}
+						onClick={handleOpenAddModal}
 					>
 						<UserPlus />
 						Add Employee
@@ -125,7 +164,7 @@ export const EmployeeDirectory = () => {
 							type="search"
 							placeholder="Search by name or role…"
 							value={searchQuery}
-							onChange={(e) => handleSearchChange(e.target.value)}
+							onChange={handleSearchInputChange}
 						/>
 					</div>
 
@@ -134,13 +173,13 @@ export const EmployeeDirectory = () => {
 							data-testid={testIds.departmentSelect}
 							options={departmentOptions}
 							value={selectedDepartmentId}
-							onChange={(e) => handleDepartmentChange(e.target.value)}
+							onChange={handleDepartmentSelectChange}
 						/>
 						<Select
 							data-testid={testIds.locationSelect}
 							options={locationOptions}
 							value={selectedLocationId}
-							onChange={(e) => handleLocationChange(e.target.value)}
+							onChange={handleLocationSelectChange}
 						/>
 					</div>
 				</div>
@@ -157,13 +196,14 @@ export const EmployeeDirectory = () => {
 
 			<AddEmployeeModal
 				isOpen={isAddEmployeeModalOpen}
-				onClose={() => setAddEmployeeModalState(null)}
-				onEmployeeCreated={() => setAddEmployeeModalState(null)}
+				onClose={handleAddModalClose}
+				onEmployeeCreated={handleEmployeeCreated}
 			/>
 
 			<ViewProfileModal
+				isOpen={viewProfileEmployeeId !== null}
 				employeeId={viewProfileEmployeeId}
-				onClose={() => setViewProfileEmployeeId(null)}
+				onClose={handleViewProfileClose}
 				onEmployeeSelect={setViewProfileEmployeeId}
 			/>
 		</>

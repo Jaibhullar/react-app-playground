@@ -41,6 +41,8 @@ export type UseEditableAttributeCardInput = {
 	duplicateNameErrorMessage: string,
 	/** Initial colour value for new-item and edit forms. Pass undefined when colour support is not needed. */
 	defaultColor?: string,
+	/** Message shown to the user when a server 409 conflict is returned on delete (e.g. employees still assigned). */
+	deleteConflictMessage?: string,
 };
 
 export type UseEditableAttributeCardReturn = {
@@ -73,6 +75,13 @@ export type UseEditableAttributeCardReturn = {
 	onAddSuccess: () => void,
 	onUpdateSuccess: () => void,
 	onDeleteSuccess: () => void,
+	// Mutation error state — surface API/network failures to the UI
+	mutationError: string | null,
+	/** Wire to the actions hook onError callback to surface general API errors. */
+	handleMutationError: (error: Error) => void,
+	/** Wire to the actions hook onDeleteConflict callback for 409 responses. */
+	handleDeleteConflict: () => void,
+	clearMutationError: () => void,
 };
 
 // ---------------------------------------------------------------------------
@@ -86,18 +95,23 @@ function isDuplicateName(name: string, items: AttributeItem[], excludeId?: numbe
 	return items.some((item) => item.name.toLowerCase() === normalised && item.id !== excludeId);
 }
 
+const DEFAULT_DELETE_CONFLICT_MESSAGE = 'This item still has employees assigned to it. Please reload and reassign them before deleting.' as const;
+
 export function useEditableAttributeCard({
 	items,
 	duplicateNameErrorMessage,
 	defaultColor,
+	deleteConflictMessage,
 }: UseEditableAttributeCardInput): UseEditableAttributeCardReturn {
 	const resolvedDefaultColor = defaultColor ?? DEFAULT_COLOR;
+	const resolvedConflictMessage = deleteConflictMessage ?? DEFAULT_DELETE_CONFLICT_MESSAGE;
 
 	const [newName, setNewName] = useState('');
 	const [newColor, setNewColor] = useState(resolvedDefaultColor);
 	const [newNameError, setNewNameError] = useState<string | null>(null);
 	const [editingState, setEditingState] = useState<EditingState>(null);
 	const [reassignDeleteState, setReassignDeleteState] = useState<ReassignDeleteState>(null);
+	const [mutationError, setMutationError] = useState<string | null>(null);
 
 	// ---------------------------------------------------------------------------
 	// "New item" handlers
@@ -197,6 +211,22 @@ export function useEditableAttributeCard({
 	}, []);
 
 	// ---------------------------------------------------------------------------
+	// Mutation error callbacks (wire to the actions hook onError / onDeleteConflict)
+	// ---------------------------------------------------------------------------
+
+	const handleMutationError = useCallback((error: Error) => {
+		setMutationError(error.message);
+	}, []);
+
+	const handleDeleteConflict = useCallback(() => {
+		setMutationError(resolvedConflictMessage);
+	}, [resolvedConflictMessage]);
+
+	const clearMutationError = useCallback(() => {
+		setMutationError(null);
+	}, []);
+
+	// ---------------------------------------------------------------------------
 	// Replacement options (for the reassign-and-delete modal)
 	// ---------------------------------------------------------------------------
 
@@ -227,5 +257,9 @@ export function useEditableAttributeCard({
 		onAddSuccess,
 		onUpdateSuccess,
 		onDeleteSuccess,
+		mutationError,
+		handleMutationError,
+		handleDeleteConflict,
+		clearMutationError,
 	};
 }

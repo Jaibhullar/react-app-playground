@@ -14,6 +14,7 @@ const testIds = {
 };
 
 export type ViewProfileModalProps = {
+	isOpen: boolean,
 	employeeId: number | null,
 	onClose: () => void,
 	onEmployeeSelect: (employeeId: number) => void,
@@ -57,8 +58,7 @@ const HierarchyPersonButton = ({ employee, onSelect, showChevron = false }: Hier
 	</button>
 );
 
-export const ViewProfileModal = ({ employeeId, onClose, onEmployeeSelect }: ViewProfileModalProps) => {
-	const isOpen = employeeId !== null;
+export const ViewProfileModal = ({ isOpen, employeeId, onClose, onEmployeeSelect }: ViewProfileModalProps) => {
 	const { employeeDetail, isLoading, isError } = useEmployeeDetail({ employeeId });
 
 	const bodyContent = (() => {

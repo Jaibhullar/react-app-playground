@@ -34,6 +34,8 @@ export const DepartmentsCard = () => {
 		onCreateSuccess: card.onAddSuccess,
 		onUpdateSuccess: card.onUpdateSuccess,
 		onDeleteSuccess: card.onDeleteSuccess,
+		onDeleteConflict: card.handleDeleteConflict,
+		onError: card.handleMutationError,
 	});
 
 	const handleAdd = useCallback(() => {
@@ -97,6 +99,7 @@ export const DepartmentsCard = () => {
 					</Button>
 				</div>
 
+				{card.mutationError && <p className={css.errorText}>{card.mutationError}</p>}
 				{isLoading && <p className={css.stateMessage}>Loading departments…</p>}
 				{isError && <p className={css.stateMessage}>Failed to load departments.</p>}
 

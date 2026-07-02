@@ -56,6 +56,16 @@ export const AttributeListItem = ({
 }: AttributeListItemProps) => {
 	const hasAssignedEmployees = item.totalEmployees > 0;
 
+	const handleEditStartClick = () => onEditStart(item.id);
+	const handleDeleteClick = () => {
+		if (hasAssignedEmployees) {
+			onReassignAndDelete(item.id);
+		}
+		else {
+			onDelete(item.id);
+		}
+	};
+
 	if (isEditing) {
 		return (
 			<li className={css.item} data-testid={testIds.item(item.id)}>
@@ -123,7 +133,7 @@ export const AttributeListItem = ({
 				<Button
 					variant="ghost"
 					size="icon"
-					onClick={() => onEditStart(item.id)}
+					onClick={handleEditStartClick}
 					data-testid={testIds.editButton(item.id)}
 					aria-label={`Edit ${item.name}`}
 				>
@@ -132,7 +142,7 @@ export const AttributeListItem = ({
 				<Button
 					variant="ghost"
 					size="icon"
-					onClick={() => hasAssignedEmployees ? onReassignAndDelete(item.id) : onDelete(item.id)}
+					onClick={handleDeleteClick}
 					disabled={isDeletePending}
 					data-testid={testIds.deleteButton(item.id)}
 					aria-label={

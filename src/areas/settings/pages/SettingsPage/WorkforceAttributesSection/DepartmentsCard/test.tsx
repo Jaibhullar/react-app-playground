@@ -64,6 +64,10 @@ function buildDefaultCardReturn(): UseEditableAttributeCardReturn {
 		onAddSuccess: vi.fn(),
 		onUpdateSuccess: vi.fn(),
 		onDeleteSuccess: vi.fn(),
+		mutationError: null,
+		handleMutationError: vi.fn(),
+		handleDeleteConflict: vi.fn(),
+		clearMutationError: vi.fn(),
 	};
 }
 

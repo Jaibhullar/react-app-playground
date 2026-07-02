@@ -59,9 +59,9 @@ describe('<EmployeeDirectory />', () => {
 		mockUseEmployeeDirectory.mockReturnValue({ ...defaultDirectoryReturn });
 		mockUseEmployeeDirectoryFilters.mockReturnValue({ ...defaultFiltersReturn });
 		vi.mocked(AddEmployeeModal).mockImplementation(({ isOpen }: AddEmployeeModalProps) =>
-			isOpen ? <div data-testid={MOCK_ADD_MODAL_TEST_ID} /> : null
+			isOpen ? <div data-testid={MOCK_ADD_MODAL_TEST_ID} /> : <></>
 		);
-		vi.mocked(ViewProfileModal).mockImplementation(() => null);
+		vi.mocked(ViewProfileModal).mockImplementation(() => <></>);
 	});
 
 	it('renders the page container', () => {

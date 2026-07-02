@@ -32,6 +32,8 @@ export const RolesCard = () => {
 		onCreateSuccess: card.onAddSuccess,
 		onUpdateSuccess: card.onUpdateSuccess,
 		onDeleteSuccess: card.onDeleteSuccess,
+		onDeleteConflict: card.handleDeleteConflict,
+		onError: card.handleMutationError,
 	});
 
 	const handleAdd = useCallback(() => {
@@ -88,6 +90,7 @@ export const RolesCard = () => {
 					</Button>
 				</div>
 
+				{card.mutationError && <p className={css.errorText}>{card.mutationError}</p>}
 				{isLoading && <p className={css.stateMessage}>Loading roles…</p>}
 				{isError && <p className={css.stateMessage}>Failed to load roles.</p>}
 
