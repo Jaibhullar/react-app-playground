@@ -63,4 +63,3 @@ export function useEmployeeDirectory({ searchQuery, departmentId, locationId }: 
 		handlePageChange,
 	};
 }
-

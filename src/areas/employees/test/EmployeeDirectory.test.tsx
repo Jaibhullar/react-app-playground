@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { EmployeeDirectory } from '../EmployeeDirectory';
 import { AddEmployeeModal, type AddEmployeeModalProps } from '../components/AddEmployeeModal';
 import { ViewProfileModal } from '../components/ViewProfileModal';
+import { EmployeeDirectory } from '../EmployeeDirectory';
 import { useEmployeeDirectory, type UseEmployeeDirectoryReturn } from '../hooks/useEmployeeDirectory';
 import { useEmployeeDirectoryFilters, type UseEmployeeDirectoryFiltersReturn } from '../hooks/useEmployeeDirectoryFilters';
 import type { Employee } from '../types';

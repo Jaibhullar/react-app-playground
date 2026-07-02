@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 
 import {
-	useEditableAttributeCard,
 	type AddPayload,
 	type AttributeItem,
+	useEditableAttributeCard,
 	type UseEditableAttributeCardInput
 } from '.';
 
@@ -37,41 +37,59 @@ describe('useEditableAttributeCard', () => {
 		it('returns null when newName is empty', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
 			let payload: AddPayload | null = null;
-			act(() => { payload = result.current.tryAdd(); });
+			act(() => {
+				payload = result.current.tryAdd();
+			});
 			expect(payload).toBeNull();
 		});
 
 		it('sets newNameError and returns null when the name is a duplicate', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleNewNameChange('Engineering'); });
+			act(() => {
+				result.current.handleNewNameChange('Engineering');
+			});
 			let payload: AddPayload | null = null;
-			act(() => { payload = result.current.tryAdd(); });
+			act(() => {
+				payload = result.current.tryAdd();
+			});
 			expect(payload).toBeNull();
 			expect(result.current.newNameError).toBe(DUPLICATE_NAME_ERROR);
 		});
 
 		it('is case-insensitive when checking for duplicates', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleNewNameChange('ENGINEERING'); });
+			act(() => {
+				result.current.handleNewNameChange('ENGINEERING');
+			});
 			let payload: AddPayload | null = null;
-			act(() => { payload = result.current.tryAdd(); });
+			act(() => {
+				payload = result.current.tryAdd();
+			});
 			expect(payload).toBeNull();
 		});
 
 		it('returns the name and color payload when the name is valid', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleNewNameChange('Design'); });
+			act(() => {
+				result.current.handleNewNameChange('Design');
+			});
 			let payload: AddPayload | null = null;
-			act(() => { payload = result.current.tryAdd(); });
+			act(() => {
+				payload = result.current.tryAdd();
+			});
 			expect(payload).toEqual({ name: 'Design', color: DEFAULT_COLOR });
 			expect(result.current.newNameError).toBeNull();
 		});
 
 		it('trims leading/trailing whitespace from the name before returning', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleNewNameChange('  Design  '); });
+			act(() => {
+				result.current.handleNewNameChange('  Design  ');
+			});
 			let payload: AddPayload | null = null;
-			act(() => { payload = result.current.tryAdd(); });
+			act(() => {
+				payload = result.current.tryAdd();
+			});
 			expect(payload).toEqual({ name: 'Design', color: DEFAULT_COLOR });
 		});
 	});
@@ -79,7 +97,9 @@ describe('useEditableAttributeCard', () => {
 	describe('handleEditStart', () => {
 		it('sets editingState with the matching item values', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleEditStart(1); });
+			act(() => {
+				result.current.handleEditStart(1);
+			});
 			expect(result.current.editingState).toMatchObject({
 				id: 1,
 				editValue: 'Engineering',
@@ -89,7 +109,9 @@ describe('useEditableAttributeCard', () => {
 
 		it('does nothing when the id does not match any item', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleEditStart(999); });
+			act(() => {
+				result.current.handleEditStart(999);
+			});
 			expect(result.current.editingState).toBeNull();
 		});
 	});
@@ -97,8 +119,12 @@ describe('useEditableAttributeCard', () => {
 	describe('handleEditCancel', () => {
 		it('clears editingState', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleEditStart(1); });
-			act(() => { result.current.handleEditCancel(); });
+			act(() => {
+				result.current.handleEditStart(1);
+			});
+			act(() => {
+				result.current.handleEditCancel();
+			});
 			expect(result.current.editingState).toBeNull();
 		});
 	});
@@ -106,18 +132,26 @@ describe('useEditableAttributeCard', () => {
 	describe('handleNewNameChange', () => {
 		it('updates newName', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleNewNameChange('Design'); });
+			act(() => {
+				result.current.handleNewNameChange('Design');
+			});
 			expect(result.current.newName).toBe('Design');
 		});
 
 		it('clears newNameError when the user types after a validation failure', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
 			// trigger an error first
-			act(() => { result.current.handleNewNameChange('Engineering'); });
-			act(() => { result.current.tryAdd(); });
+			act(() => {
+				result.current.handleNewNameChange('Engineering');
+			});
+			act(() => {
+				result.current.tryAdd();
+			});
 			expect(result.current.newNameError).not.toBeNull();
 			// now type again
-			act(() => { result.current.handleNewNameChange('Design'); });
+			act(() => {
+				result.current.handleNewNameChange('Design');
+			});
 			expect(result.current.newNameError).toBeNull();
 		});
 	});
@@ -125,15 +159,23 @@ describe('useEditableAttributeCard', () => {
 	describe('onAddSuccess', () => {
 		it('resets newName to empty', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleNewNameChange('Design'); });
-			act(() => { result.current.onAddSuccess(); });
+			act(() => {
+				result.current.handleNewNameChange('Design');
+			});
+			act(() => {
+				result.current.onAddSuccess();
+			});
 			expect(result.current.newName).toBe('');
 		});
 
 		it('resets newColor to the defaultColor', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleNewColorChange('#ff0000'); });
-			act(() => { result.current.onAddSuccess(); });
+			act(() => {
+				result.current.handleNewColorChange('#ff0000');
+			});
+			act(() => {
+				result.current.onAddSuccess();
+			});
 			expect(result.current.newColor).toBe(DEFAULT_COLOR);
 		});
 	});
@@ -141,8 +183,12 @@ describe('useEditableAttributeCard', () => {
 	describe('onUpdateSuccess', () => {
 		it('clears editingState', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleEditStart(1); });
-			act(() => { result.current.onUpdateSuccess(); });
+			act(() => {
+				result.current.handleEditStart(1);
+			});
+			act(() => {
+				result.current.onUpdateSuccess();
+			});
 			expect(result.current.editingState).toBeNull();
 		});
 	});
@@ -150,8 +196,12 @@ describe('useEditableAttributeCard', () => {
 	describe('onDeleteSuccess', () => {
 		it('clears reassignDeleteState', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleDeleteOrReassignRequest(1); });
-			act(() => { result.current.onDeleteSuccess(); });
+			act(() => {
+				result.current.handleDeleteOrReassignRequest(1);
+			});
+			act(() => {
+				result.current.onDeleteSuccess();
+			});
 			expect(result.current.reassignDeleteState).toBeNull();
 		});
 	});
@@ -164,7 +214,9 @@ describe('useEditableAttributeCard', () => {
 
 		it('excludes the item being deleted from the options', () => {
 			const { result } = renderHook(() => useEditableAttributeCard(defaultInput));
-			act(() => { result.current.handleDeleteOrReassignRequest(1); });
+			act(() => {
+				result.current.handleDeleteOrReassignRequest(1);
+			});
 			expect(result.current.replacementOptions).toHaveLength(1);
 			expect(result.current.replacementOptions[0].value).toBe('2');
 		});
