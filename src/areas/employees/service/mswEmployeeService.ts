@@ -26,7 +26,7 @@ const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<Ro
 			(roleId === 'all' || employee.role.id === Number(roleId))
 		);
 
-			const searchTerm = (search && search !== 'all') ? search.toLowerCase() : null;
+		const searchTerm = (search && search !== 'all') ? search.toLowerCase() : null;
 		const filteredEmployees = searchTerm
 			? filteredByAttributes.filter(e =>
 				e.name.toLowerCase().includes(searchTerm) ||
