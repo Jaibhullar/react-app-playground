@@ -55,9 +55,9 @@ function getDepartmentUrl(departmentId: number): string {
 
 // Note there is no error handling on GET and we are using base fetch here for demo simplicity.
 export async function executeGetDepartments(): Promise<GetDepartmentsResponse> {
-	return fetch(`${API_BASE_URL}${getDepartmentsRoute}`)
-		.then(response => response.json())
-		.then(json => json as GetDepartmentsResponse);
+	const response = await fetch(`${API_BASE_URL}${getDepartmentsRoute}`);
+	const json = await response.json();
+	return json as GetDepartmentsResponse;
 }
 
 export async function executeCreateDepartment(request: CreateDepartmentRequest): Promise<void> {

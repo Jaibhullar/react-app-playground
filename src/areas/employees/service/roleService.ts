@@ -53,9 +53,9 @@ function getRoleUrl(roleId: number): string {
 
 // Note there is no error handling on GET and we are using base fetch here for demo simplicity.
 export async function executeGetRoles(): Promise<GetRolesResponse> {
-	return fetch(`${API_BASE_URL}${getRolesRoute}`)
-		.then(response => response.json())
-		.then(json => json as GetRolesResponse);
+	const response = await fetch(`${API_BASE_URL}${getRolesRoute}`);
+	const json = await response.json();
+	return json as GetRolesResponse;
 }
 
 export async function executeCreateRole(request: CreateRoleRequest): Promise<void> {

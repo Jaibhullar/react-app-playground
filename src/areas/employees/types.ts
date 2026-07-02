@@ -2,7 +2,7 @@ export type Employee = {
 	id: number,
 	name: string,
 	department: Department,
-	location: Location,
+	location: EmployeeLocation,
 	role: EmployeeRole,
 };
 
@@ -13,7 +13,7 @@ export type Department = {
 	color: string,
 };
 
-export type Location = {
+export type EmployeeLocation = {
 	id: number,
 	name: string,
 };
@@ -21,12 +21,6 @@ export type Location = {
 export type EmployeeRole = {
 	id: number,
 	name: string,
-};
-
-export type EmployeeFilters = {
-	departmentId?: number,
-	locationId?: number,
-	roleId?: number,
 };
 
 export type EmployeeDetail = Employee & {

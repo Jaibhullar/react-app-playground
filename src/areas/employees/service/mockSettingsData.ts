@@ -1,10 +1,10 @@
-import type { Department, EmployeeRole, Location } from '../types';
+import type { Department, EmployeeLocation, EmployeeRole } from '../types';
 import { SEED_DEPARTMENTS, SEED_LOCATIONS, SEED_ROLES } from './mockAttributeData';
 import { mockEmployees } from './mockEmployeeData';
 
 // Mutable copies — spread so runtime add/update/delete don't mutate the seed constants.
 export const mockDepartments: Department[] = [...SEED_DEPARTMENTS];
-export const mockLocations: Location[] = [...SEED_LOCATIONS];
+export const mockLocations: EmployeeLocation[] = [...SEED_LOCATIONS];
 export const mockRoles: EmployeeRole[] = [...SEED_ROLES];
 
 let nextDepartmentId = mockDepartments.length;
@@ -54,13 +54,13 @@ export function removeDepartment(departmentId: number): void {
 	if (index !== -1) mockDepartments.splice(index, 1);
 }
 
-export function addLocation(name: string): Location {
-	const location: Location = { id: nextLocationId++, name };
+export function addLocation(name: string): EmployeeLocation {
+	const location: EmployeeLocation = { id: nextLocationId++, name };
 	mockLocations.push(location);
 	return location;
 }
 
-export function updateLocation(locationId: number, name: string): Location | undefined {
+export function updateLocation(locationId: number, name: string): EmployeeLocation | undefined {
 	const location = mockLocations.find(l => l.id === locationId);
 	if (!location) return undefined;
 	location.name = name;

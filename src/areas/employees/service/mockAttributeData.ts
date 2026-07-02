@@ -1,4 +1,4 @@
-import type { Department, EmployeeRole, Location } from '../types';
+import type { Department, EmployeeLocation, EmployeeRole } from '../types';
 
 export const SEED_DEPARTMENTS: Department[] = [
 	{ id: 0, name: 'Engineering', color: '#6366f1' },
@@ -9,7 +9,7 @@ export const SEED_DEPARTMENTS: Department[] = [
 	{ id: 5, name: 'Finance', color: '#8b5cf6' },
 ];
 
-export const SEED_LOCATIONS: Location[] = [
+export const SEED_LOCATIONS: EmployeeLocation[] = [
 	{ id: 0, name: 'San Francisco' },
 	{ id: 1, name: 'New York' },
 	{ id: 2, name: 'London' },

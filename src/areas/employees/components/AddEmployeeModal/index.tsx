@@ -33,7 +33,7 @@ const INITIAL_FORM_VALUES: AddEmployeeFormValues = {
 	locationId: '',
 };
 
-const TODAY = new Date().toISOString().split('T')[0] as string;
+const TODAY = new Date().toISOString().slice(0, 10);
 
 function isAddEmployeeFormValid(values: AddEmployeeFormValues): boolean {
 	return (

@@ -57,13 +57,12 @@ const createEmployeeHandler = employeesFactory.post.json<CreateEmployeeRequest, 
 
 const updateEmployeeHandler = employeeFactory.put.json<Omit<UpdateEmployeeRequest, 'employeeId'>, void, UrlParams<EmployeeRouteParams>>(
 	({ content, routeParams }) => {
-		const { name, email, phone, departmentId, locationId, roleId } = content;
+		const { name, email, phone, startDate, departmentId, locationId, roleId } = content;
 		const department = mockDepartments.find(d => d.id === departmentId);
 		const location = mockLocations.find(l => l.id === locationId);
 		const role = mockRoles.find(r => r.id === roleId);
-		const existingEmployee = mockEmployees.find(e => e.id === Number(routeParams.employeeId));
-		if (!department || !location || !role || !existingEmployee) return;
-		updateEmployee(Number(routeParams.employeeId), { name, email, phone, startDate: existingEmployee.startDate, department, location, role });
+		if (!department || !location || !role) return;
+		updateEmployee(Number(routeParams.employeeId), { name, email, phone, startDate, department, location, role });
 	}
 );
 

@@ -99,6 +99,7 @@ export type UpdateEmployeeRequest = {
 	name: string,
 	email: string,
 	phone: string,
+	startDate: string,
 	departmentId: number,
 	locationId: number,
 	roleId: number,
@@ -147,21 +148,15 @@ function transformDetailDTO(dto: DTO_EmployeeDetail | undefined): EmployeeDetail
 	return employeeDetail;
 }
 
-export async function executeGetEmployees(request: GetEmployeesRequest) {
+export async function executeGetEmployees(request: GetEmployeesRequest): Promise<GetEmployeesResponse> {
 	const url = getEmployeesQueryUrl(request);
 
 	// Note there is no error handling and we are using base fetch here for demo simplicity.
-	return fetch(url)
-		.then(response=>
-			response.json()
-		)
-		.then(json=>{
-			const responseDTO = json as DTO_GetEmployeesResponse;
-			const response : GetEmployeesResponse = { ...responseDTO, employees: responseDTO.employees.map(transformDTO) };
-			return response;
-		});
+	const response = await fetch(url);
+	const json = await response.json();
+	const responseDTO = json as DTO_GetEmployeesResponse;
+	return { ...responseDTO, employees: responseDTO.employees.map(transformDTO) };
 }
-
 
 function getEmployeesQueryUrl(request: GetEmployeesRequest): string {
 	const departmentId = request?.filters?.departmentId ?? 'all';

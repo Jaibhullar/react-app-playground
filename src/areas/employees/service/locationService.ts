@@ -1,10 +1,10 @@
 import { API_BASE_URL } from '@/common/constants';
 
-import type { Location } from '../types';
+import type { EmployeeLocation } from '../types';
 
 // --- Domain Types ---
 
-export type LocationWithCount = Location & {
+export type LocationWithCount = EmployeeLocation & {
 	totalEmployees: number,
 };
 
@@ -53,9 +53,9 @@ function getLocationUrl(locationId: number): string {
 
 // Note there is no error handling on GET and we are using base fetch here for demo simplicity.
 export async function executeGetLocations(): Promise<GetLocationsResponse> {
-	return fetch(`${API_BASE_URL}${getLocationsRoute}`)
-		.then(response => response.json())
-		.then(json => json as GetLocationsResponse);
+	const response = await fetch(`${API_BASE_URL}${getLocationsRoute}`);
+	const json = await response.json();
+	return json as GetLocationsResponse;
 }
 
 export async function executeCreateLocation(request: CreateLocationRequest): Promise<void> {

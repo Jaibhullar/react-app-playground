@@ -16,7 +16,7 @@ export type UseEmployeeDetailReturn = {
 export function useEmployeeDetail({ employeeId }: UseEmployeeDetailInput): UseEmployeeDetailReturn {
 	const { data, isLoading, isError } = useQuery({
 		queryKey: EMPLOYEE_DETAIL_QUERY_KEY(employeeId ?? 0),
-		queryFn: () => executeGetEmployeeDetail({ employeeId: employeeId! }),
+		queryFn: () => executeGetEmployeeDetail({ employeeId: employeeId ?? 0 }),
 		enabled: employeeId !== null,
 	});
 

@@ -118,6 +118,7 @@ export function updateEmployee(employeeId: number, fields: EmployeeMutableFields
 	employee.name = fields.name;
 	employee.email = fields.email;
 	employee.phone = fields.phone;
+	employee.startDate = fields.startDate;
 	employee.department = fields.department;
 	employee.location = fields.location;
 	employee.role = fields.role;
