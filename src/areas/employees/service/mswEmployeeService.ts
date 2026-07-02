@@ -18,11 +18,21 @@ export type RouteParams = GetEmployeesFilters & GetEmployeesPagination;
 
 const getItems = getItemsFactory.get.json<DTO_GetEmployeesResponse, UrlParams<RouteParams>>(
 	({ routeParams }) => {
-		const { departmentId, locationId, roleId, currentPage, pageSize } = routeParams;
+		const { departmentId, locationId, roleId, currentPage, pageSize, search } = routeParams;
 
-		const filteredEmployees = mockEmployees.filter(employee => (departmentId === 'all' || employee.department.id === Number(departmentId))
-			&& (locationId === 'all' || employee.location.id === Number(locationId))
-			&& (roleId === 'all' || employee.role.id === Number(roleId)));
+		const filteredByAttributes = mockEmployees.filter(employee =>
+			(departmentId === 'all' || employee.department.id === Number(departmentId)) &&
+			(locationId === 'all' || employee.location.id === Number(locationId)) &&
+			(roleId === 'all' || employee.role.id === Number(roleId))
+		);
+
+		const searchTerm = search ? search.toLowerCase() : null;
+		const filteredEmployees = searchTerm
+			? filteredByAttributes.filter(e =>
+				e.name.toLowerCase().includes(searchTerm) ||
+				e.role.name.toLowerCase().includes(searchTerm)
+			)
+			: filteredByAttributes;
 
 		const paginatedEmployees = paginateData(filteredEmployees, Number(currentPage), Number(pageSize));
 		return {

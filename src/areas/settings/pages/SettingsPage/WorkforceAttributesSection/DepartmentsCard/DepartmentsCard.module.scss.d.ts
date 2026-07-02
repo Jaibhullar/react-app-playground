@@ -10,3 +10,4 @@ export const addButton: string;
 export const errorText: string;
 export const list: string;
 export const stateMessage: string;
+export const colorSwatch: string;

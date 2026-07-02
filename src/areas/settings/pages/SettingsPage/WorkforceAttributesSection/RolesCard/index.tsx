@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import { Briefcase, Plus } from 'lucide-react';
 
 import { useRoleActions } from '@/areas/employees/hooks/useRoleActions';
@@ -6,29 +6,13 @@ import type { RoleWithCount } from '@/areas/employees/service/roleService';
 import { useRoles } from '@/areas/settings/hooks/useRoles';
 import { Button } from '@/common/components/ui/Button';
 
+import { AttributeListItem } from '../AttributeListItem';
 import { ReassignAndDeleteModal } from '../ReassignAndDeleteModal';
-import { RoleListItem } from './RoleListItem';
+import { useEditableAttributeCard } from '../useEditableAttributeCard';
 
 import css from './RolesCard.module.scss';
 
 const DUPLICATE_NAME_ERROR = 'A role with this name already exists' as const;
-
-type EditingState = {
-	roleId: number,
-	editValue: string,
-	nameError: string | null,
-} | null;
-
-type ReassignDeleteState = {
-	id: number,
-	name: string,
-	totalEmployees: number,
-} | null;
-
-function isDuplicateName(name: string, roles: RoleWithCount[], excludeId?: number): boolean {
-	const normalised = name.trim().toLowerCase();
-	return roles.some(r => r.name.toLowerCase() === normalised && r.id !== excludeId);
-}
 
 const testIds = {
 	card: 'roles-card',
@@ -39,82 +23,31 @@ const testIds = {
 export const RolesCard = () => {
 	const { roles, isLoading, isError } = useRoles();
 
-	const [newRoleName, setNewRoleName] = useState('');
-	const [newRoleNameError, setNewRoleNameError] = useState<string | null>(null);
-	const [editingState, setEditingState] = useState<EditingState>(null);
-	const [reassignDeleteState, setReassignDeleteState] = useState<ReassignDeleteState>(null);
+	const card = useEditableAttributeCard({
+		items: roles,
+		duplicateNameErrorMessage: DUPLICATE_NAME_ERROR,
+	});
 
 	const { handleCreateRole, handleUpdateRole, handleDeleteRole, isCreatePending, isUpdatePending, isDeletePending } = useRoleActions({
-		onCreateSuccess: () => setNewRoleName(''),
-		onUpdateSuccess: () => setEditingState(null),
-		onDeleteSuccess: () => setReassignDeleteState(null),
+		onCreateSuccess: card.onAddSuccess,
+		onUpdateSuccess: card.onUpdateSuccess,
+		onDeleteSuccess: card.onDeleteSuccess,
 	});
 
 	const handleAdd = useCallback(() => {
-		const trimmedName = newRoleName.trim();
-		if (!trimmedName) return;
-		if (isDuplicateName(trimmedName, roles)) {
-			setNewRoleNameError(DUPLICATE_NAME_ERROR);
-			return;
-		}
-		setNewRoleNameError(null);
-		handleCreateRole(trimmedName);
-	}, [newRoleName, roles, handleCreateRole]);
-
-	const handleNewNameChange = useCallback((value: string) => {
-		setNewRoleName(value);
-		if (newRoleNameError) setNewRoleNameError(null);
-	}, [newRoleNameError]);
-
-	const handleEditStart = useCallback((roleId: number) => {
-		const role = roles.find((r: RoleWithCount) => r.id === roleId);
-		if (!role) return;
-		setEditingState({ roleId, editValue: role.name, nameError: null });
-	}, [roles]);
-
-	const handleEditValueChange = useCallback((value: string) => {
-		setEditingState((prev) => {
-			if (!prev) return null;
-			return { ...prev, editValue: value, nameError: null };
-		});
-	}, []);
+		const payload = card.tryAdd();
+		if (payload) handleCreateRole(payload.name);
+	}, [card.tryAdd, handleCreateRole]);
 
 	const handleEditConfirm = useCallback(() => {
-		if (!editingState) return;
-		const trimmedName = editingState.editValue.trim();
-		if (!trimmedName) return;
-		if (isDuplicateName(trimmedName, roles, editingState.roleId)) {
-			setEditingState((prev) => prev ? { ...prev, nameError: DUPLICATE_NAME_ERROR } : null);
-			return;
-		}
-		handleUpdateRole(editingState.roleId, trimmedName);
-	}, [editingState, roles, handleUpdateRole]);
-
-	const handleEditCancel = useCallback(() => {
-		setEditingState(null);
-	}, []);
-
-	const handleDelete = useCallback((roleId: number) => {
-		handleDeleteRole(roleId);
-	}, [handleDeleteRole]);
-
-	const handleReassignAndDeleteRequest = useCallback((roleId: number) => {
-		const role = roles.find((r: RoleWithCount) => r.id === roleId);
-		if (!role) return;
-		setReassignDeleteState({ id: role.id, name: role.name, totalEmployees: role.totalEmployees });
-	}, [roles]);
+		const payload = card.tryUpdate();
+		if (payload) handleUpdateRole(payload.id, payload.name);
+	}, [card.tryUpdate, handleUpdateRole]);
 
 	const handleReassignAndDeleteConfirm = useCallback((newRoleId: number) => {
-		if (!reassignDeleteState) return;
-		handleDeleteRole(reassignDeleteState.id, newRoleId);
-	}, [reassignDeleteState, handleDeleteRole]);
-
-	const replacementRoleOptions = useMemo(
-		() => roles
-			.filter((r: RoleWithCount) => r.id !== reassignDeleteState?.id)
-			.map((r: RoleWithCount) => ({ value: String(r.id), label: r.name })),
-		[roles, reassignDeleteState?.id]
-	);
+		if (!card.reassignDeleteState) return;
+		handleDeleteRole(card.reassignDeleteState.id, newRoleId);
+	}, [card.reassignDeleteState, handleDeleteRole]);
 
 	return (
 		<>
@@ -134,19 +67,19 @@ export const RolesCard = () => {
 						<input
 							className={css.addInput}
 							placeholder="New role name"
-							value={newRoleName}
-							onChange={(e) => handleNewNameChange(e.target.value)}
+							value={card.newName}
+							onChange={(e) => card.handleNewNameChange(e.target.value)}
 							onKeyDown={(e) => {
 								if (e.key === 'Enter') handleAdd();
 							}}
 							data-testid={testIds.addInput}
 							aria-label="New role name"
 						/>
-						{newRoleNameError && <p className={css.errorText}>{newRoleNameError}</p>}
+						{card.newNameError && <p className={css.errorText}>{card.newNameError}</p>}
 					</div>
 					<Button
 						onClick={handleAdd}
-						disabled={!newRoleName.trim() || isCreatePending}
+						disabled={!card.newName.trim() || isCreatePending}
 						data-testid={testIds.addButton}
 						className={css.addButton}
 					>
@@ -161,19 +94,22 @@ export const RolesCard = () => {
 				{!isLoading && !isError && (
 					<ul className={css.list} role="list">
 						{roles.map((role: RoleWithCount) => {
-							const activeEdit = editingState?.roleId === role.id ? editingState : null;
+							const activeEdit = card.editingState?.id === role.id ? card.editingState : null;
 							return (
-								<RoleListItem
+								<AttributeListItem
 									key={role.id}
-									role={role}
+									item={role}
+									leadingSlot={<Briefcase size={16} aria-hidden="true" />}
 									isEditing={activeEdit !== null}
 									editValue={activeEdit?.editValue ?? ''}
 									editNameError={activeEdit?.nameError ?? undefined}
-									onEditValueChange={handleEditValueChange}
-									onEditStart={handleEditStart}
+									onEditValueChange={card.handleEditValueChange}
+									onEditStart={card.handleEditStart}
 									onEditConfirm={handleEditConfirm}
-									onEditCancel={handleEditCancel}
-									onDelete={handleDelete} onReassignAndDelete={handleReassignAndDeleteRequest} isUpdatePending={isUpdatePending}
+									onEditCancel={card.handleEditCancel}
+									onDelete={handleDeleteRole}
+									onReassignAndDelete={card.handleDeleteOrReassignRequest}
+									isUpdatePending={isUpdatePending}
 									isDeletePending={isDeletePending}
 								/>
 							);
@@ -183,11 +119,11 @@ export const RolesCard = () => {
 			</div>
 
 			<ReassignAndDeleteModal
-				isOpen={reassignDeleteState !== null}
-				onClose={() => setReassignDeleteState(null)}
-				attributeLabel={reassignDeleteState?.name ?? ''}
-				totalAssignedEmployees={reassignDeleteState?.totalEmployees ?? 0}
-				replacementOptions={replacementRoleOptions}
+				isOpen={card.reassignDeleteState !== null}
+				onClose={card.onDeleteSuccess}
+				attributeLabel={card.reassignDeleteState?.name ?? ''}
+				totalAssignedEmployees={card.reassignDeleteState?.totalEmployees ?? 0}
+				replacementOptions={card.replacementOptions}
 				onConfirm={handleReassignAndDeleteConfirm}
 				isPending={isDeletePending}
 			/>

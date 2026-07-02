@@ -32,6 +32,8 @@ export type GetEmployeesFilters = {
 	departmentId?: number,
 	locationId?: number,
 	roleId?: number,
+	/** Case-insensitive text search matched against employee name and role. */
+	search?: string,
 };
 
 export type GetEmployeesPagination = {
@@ -110,7 +112,7 @@ export type EmployeeRouteParams = {
 	employeeId: number,
 };
 
-const getEmployeesRoute = '/employees:department=:departmentId&location=:locationId&role=:roleId&currentPage=:currentPage&pageSize=:pageSize' as const;
+const getEmployeesRoute = '/employees:department=:departmentId&location=:locationId&role=:roleId&search=:search&currentPage=:currentPage&pageSize=:pageSize' as const;
 
 const getEmployeeDetailRoute = '/employee/:employeeId' as const;
 const createEmployeeRoute = '/employees' as const;
@@ -161,13 +163,20 @@ export async function executeGetEmployees(request: GetEmployeesRequest) {
 }
 
 
-function getEmployeesQueryUrl(request: GetEmployeesRequest):string {
+function getEmployeesQueryUrl(request: GetEmployeesRequest): string {
 	const departmentId = request?.filters?.departmentId ?? 'all';
 	const locationId = request?.filters?.locationId ?? 'all';
 	const roleId = request?.filters?.roleId ?? 'all';
+	const search = request?.filters?.search ?? '';
 	const currentPage = request?.pagination?.currentPage ?? 1;
 	const pageSize = request?.pagination?.pageSize ?? 20;
-	return `${API_BASE_URL}${getEmployeesRoute.replace(':departmentId', departmentId.toString()).replace(':locationId', locationId.toString()).replace(':roleId', roleId.toString()).replace(':currentPage', currentPage.toString()).replace(':pageSize', pageSize.toString())}`;
+	return `${API_BASE_URL}${getEmployeesRoute
+		.replace(':departmentId', departmentId.toString())
+		.replace(':locationId', locationId.toString())
+		.replace(':roleId', roleId.toString())
+		.replace(':search', search)
+		.replace(':currentPage', currentPage.toString())
+		.replace(':pageSize', pageSize.toString())}`;
 }
 
 function getEmployeeDetailQueryUrl(request: GetEmployeeDetailRequest):string {

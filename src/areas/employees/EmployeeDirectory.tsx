@@ -9,6 +9,7 @@ import { Select } from '@/common/components/ui/Select';
 import { AddEmployeeModal } from './components/AddEmployeeModal';
 import { ViewProfileModal } from './components/ViewProfileModal';
 import { useEmployeeDirectory } from './hooks/useEmployeeDirectory';
+import { useEmployeeDirectoryFilters } from './hooks/useEmployeeDirectoryFilters';
 import { getDepartmentBadgeStyle, getInitials } from './utils/employeeDisplayUtils';
 import type { Employee } from './types';
 
@@ -65,21 +66,28 @@ export const EmployeeDirectory = () => {
 	const [viewProfileEmployeeId, setViewProfileEmployeeId] = useState<number | null>(null);
 
 	const {
+		searchQuery,
+		selectedDepartmentId,
+		selectedLocationId,
+		departmentOptions,
+		locationOptions,
+		handleSearchChange,
+		handleDepartmentChange,
+		handleLocationChange,
+	} = useEmployeeDirectoryFilters();
+
+	const {
 		employees,
 		currentPage,
 		totalPages,
 		isLoading,
 		isError,
-		searchQuery,
-		selectedDepartmentId,
-		selectedLocationId,
-		handleSearchChange,
-		handleDepartmentChange,
-		handleLocationChange,
 		handlePageChange,
-		departmentOptions,
-		locationOptions,
-	} = useEmployeeDirectory();
+	} = useEmployeeDirectory({
+		searchQuery,
+		departmentId: selectedDepartmentId,
+		locationId: selectedLocationId,
+	});
 
 	const gridContent = (() => {
 		if (isLoading) return <p className={css.statusMessage}>Loading employees…</p>;

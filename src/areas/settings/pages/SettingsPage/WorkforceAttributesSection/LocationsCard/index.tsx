@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import { MapPin, Plus } from 'lucide-react';
 
 import { useLocationActions } from '@/areas/employees/hooks/useLocationActions';
@@ -6,29 +6,13 @@ import type { LocationWithCount } from '@/areas/employees/service/locationServic
 import { useLocations } from '@/areas/settings/hooks/useLocations';
 import { Button } from '@/common/components/ui/Button';
 
+import { AttributeListItem } from '../AttributeListItem';
 import { ReassignAndDeleteModal } from '../ReassignAndDeleteModal';
-import { LocationListItem } from './LocationListItem';
+import { useEditableAttributeCard } from '../useEditableAttributeCard';
 
 import css from './LocationsCard.module.scss';
 
 const DUPLICATE_NAME_ERROR = 'A location with this name already exists' as const;
-
-type EditingState = {
-	locationId: number,
-	editValue: string,
-	nameError: string | null,
-} | null;
-
-type ReassignDeleteState = {
-	id: number,
-	name: string,
-	totalEmployees: number,
-} | null;
-
-function isDuplicateName(name: string, locations: LocationWithCount[], excludeId?: number): boolean {
-	const normalised = name.trim().toLowerCase();
-	return locations.some(l => l.name.toLowerCase() === normalised && l.id !== excludeId);
-}
 
 const testIds = {
 	card: 'locations-card',
@@ -39,82 +23,31 @@ const testIds = {
 export const LocationsCard = () => {
 	const { locations, isLoading, isError } = useLocations();
 
-	const [newLocationName, setNewLocationName] = useState('');
-	const [newLocationNameError, setNewLocationNameError] = useState<string | null>(null);
-	const [editingState, setEditingState] = useState<EditingState>(null);
-	const [reassignDeleteState, setReassignDeleteState] = useState<ReassignDeleteState>(null);
+	const card = useEditableAttributeCard({
+		items: locations,
+		duplicateNameErrorMessage: DUPLICATE_NAME_ERROR,
+	});
 
 	const { handleCreateLocation, handleUpdateLocation, handleDeleteLocation, isCreatePending, isUpdatePending, isDeletePending } = useLocationActions({
-		onCreateSuccess: () => setNewLocationName(''),
-		onUpdateSuccess: () => setEditingState(null),
-		onDeleteSuccess: () => setReassignDeleteState(null),
+		onCreateSuccess: card.onAddSuccess,
+		onUpdateSuccess: card.onUpdateSuccess,
+		onDeleteSuccess: card.onDeleteSuccess,
 	});
 
 	const handleAdd = useCallback(() => {
-		const trimmedName = newLocationName.trim();
-		if (!trimmedName) return;
-		if (isDuplicateName(trimmedName, locations)) {
-			setNewLocationNameError(DUPLICATE_NAME_ERROR);
-			return;
-		}
-		setNewLocationNameError(null);
-		handleCreateLocation(trimmedName);
-	}, [newLocationName, locations, handleCreateLocation]);
-
-	const handleNewNameChange = useCallback((value: string) => {
-		setNewLocationName(value);
-		if (newLocationNameError) setNewLocationNameError(null);
-	}, [newLocationNameError]);
-
-	const handleEditStart = useCallback((locationId: number) => {
-		const location = locations.find((l: LocationWithCount) => l.id === locationId);
-		if (!location) return;
-		setEditingState({ locationId, editValue: location.name, nameError: null });
-	}, [locations]);
-
-	const handleEditValueChange = useCallback((value: string) => {
-		setEditingState((prev) => {
-			if (!prev) return null;
-			return { ...prev, editValue: value, nameError: null };
-		});
-	}, []);
+		const payload = card.tryAdd();
+		if (payload) handleCreateLocation(payload.name);
+	}, [card.tryAdd, handleCreateLocation]);
 
 	const handleEditConfirm = useCallback(() => {
-		if (!editingState) return;
-		const trimmedName = editingState.editValue.trim();
-		if (!trimmedName) return;
-		if (isDuplicateName(trimmedName, locations, editingState.locationId)) {
-			setEditingState((prev) => prev ? { ...prev, nameError: DUPLICATE_NAME_ERROR } : null);
-			return;
-		}
-		handleUpdateLocation(editingState.locationId, trimmedName);
-	}, [editingState, locations, handleUpdateLocation]);
-
-	const handleEditCancel = useCallback(() => {
-		setEditingState(null);
-	}, []);
-
-	const handleDelete = useCallback((locationId: number) => {
-		handleDeleteLocation(locationId);
-	}, [handleDeleteLocation]);
-
-	const handleReassignAndDeleteRequest = useCallback((locationId: number) => {
-		const loc = locations.find((l: LocationWithCount) => l.id === locationId);
-		if (!loc) return;
-		setReassignDeleteState({ id: loc.id, name: loc.name, totalEmployees: loc.totalEmployees });
-	}, [locations]);
+		const payload = card.tryUpdate();
+		if (payload) handleUpdateLocation(payload.id, payload.name);
+	}, [card.tryUpdate, handleUpdateLocation]);
 
 	const handleReassignAndDeleteConfirm = useCallback((newLocationId: number) => {
-		if (!reassignDeleteState) return;
-		handleDeleteLocation(reassignDeleteState.id, newLocationId);
-	}, [reassignDeleteState, handleDeleteLocation]);
-
-	const replacementLocationOptions = useMemo(
-		() => locations
-			.filter((l: LocationWithCount) => l.id !== reassignDeleteState?.id)
-			.map((l: LocationWithCount) => ({ value: String(l.id), label: l.name })),
-		[locations, reassignDeleteState?.id]
-	);
+		if (!card.reassignDeleteState) return;
+		handleDeleteLocation(card.reassignDeleteState.id, newLocationId);
+	}, [card.reassignDeleteState, handleDeleteLocation]);
 
 	return (
 		<>
@@ -134,19 +67,19 @@ export const LocationsCard = () => {
 						<input
 							className={css.addInput}
 							placeholder="New location name"
-							value={newLocationName}
-							onChange={(e) => handleNewNameChange(e.target.value)}
+							value={card.newName}
+							onChange={(e) => card.handleNewNameChange(e.target.value)}
 							onKeyDown={(e) => {
 								if (e.key === 'Enter') handleAdd();
 							}}
 							data-testid={testIds.addInput}
 							aria-label="New location name"
 						/>
-						{newLocationNameError && <p className={css.errorText}>{newLocationNameError}</p>}
+						{card.newNameError && <p className={css.errorText}>{card.newNameError}</p>}
 					</div>
 					<Button
 						onClick={handleAdd}
-						disabled={!newLocationName.trim() || isCreatePending}
+						disabled={!card.newName.trim() || isCreatePending}
 						data-testid={testIds.addButton}
 						className={css.addButton}
 					>
@@ -161,19 +94,22 @@ export const LocationsCard = () => {
 				{!isLoading && !isError && (
 					<ul className={css.list} role="list">
 						{locations.map((location: LocationWithCount) => {
-							const activeEdit = editingState?.locationId === location.id ? editingState : null;
+							const activeEdit = card.editingState?.id === location.id ? card.editingState : null;
 							return (
-								<LocationListItem
+								<AttributeListItem
 									key={location.id}
-									location={location}
+									item={location}
+									leadingSlot={<MapPin size={16} className={css.locationIcon} aria-hidden="true" />}
 									isEditing={activeEdit !== null}
 									editValue={activeEdit?.editValue ?? ''}
 									editNameError={activeEdit?.nameError ?? undefined}
-									onEditValueChange={handleEditValueChange}
-									onEditStart={handleEditStart}
+									onEditValueChange={card.handleEditValueChange}
+									onEditStart={card.handleEditStart}
 									onEditConfirm={handleEditConfirm}
-									onEditCancel={handleEditCancel}
-									onDelete={handleDelete} onReassignAndDelete={handleReassignAndDeleteRequest} isUpdatePending={isUpdatePending}
+									onEditCancel={card.handleEditCancel}
+									onDelete={handleDeleteLocation}
+									onReassignAndDelete={card.handleDeleteOrReassignRequest}
+									isUpdatePending={isUpdatePending}
 									isDeletePending={isDeletePending}
 								/>
 							);
@@ -183,11 +119,11 @@ export const LocationsCard = () => {
 			</div>
 
 			<ReassignAndDeleteModal
-				isOpen={reassignDeleteState !== null}
-				onClose={() => setReassignDeleteState(null)}
-				attributeLabel={reassignDeleteState?.name ?? ''}
-				totalAssignedEmployees={reassignDeleteState?.totalEmployees ?? 0}
-				replacementOptions={replacementLocationOptions}
+				isOpen={card.reassignDeleteState !== null}
+				onClose={card.onDeleteSuccess}
+				attributeLabel={card.reassignDeleteState?.name ?? ''}
+				totalAssignedEmployees={card.reassignDeleteState?.totalEmployees ?? 0}
+				replacementOptions={card.replacementOptions}
 				onConfirm={handleReassignAndDeleteConfirm}
 				isPending={isDeletePending}
 			/>

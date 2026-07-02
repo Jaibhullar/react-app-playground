@@ -73,6 +73,28 @@
     flex-shrink: 0;
 }
 
+// Shown in edit mode only, when colour support is active (e.g. DepartmentsCard)
+.color-input {
+    width: 2rem;
+    height: 2rem;
+    padding: 0.125rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    background: none;
+    flex-shrink: 0;
+
+    &::-webkit-color-swatch-wrapper {
+        padding: 0;
+        border-radius: calc(var(--radius-md) - 2px);
+    }
+
+    &::-webkit-color-swatch {
+        border: none;
+        border-radius: calc(var(--radius-md) - 2px);
+    }
+}
+
 .error-text {
     margin: 0.25rem 0 0;
     font-size: 0.75rem;
